@@ -119,7 +119,9 @@
         + Use Google's OAuth2 to access the Google Contacts API and get one's contact information based on email address and save the Contact Details
     2. Update Contact
     3. Update Contact Details
-        + Use the Etag of the Contact Details table to check if the resource has changed since the previous query. The etag received in the previous response can be sent to check if the resource has been updated and, if so, download the latest version of the resource. 
+        + Use the Etag of the Contact Details table to check if the resource has changed since the previous query. 
+        The etag received in the previous response can be sent to check if the resource has been updated and, if so,
+        download the latest version of the resource. 
         + Dùng Etag của bảng Contact Details để kiểm tra xem liệu tài nguyên đã thay đổi kể từ lần truy vấn trước đó hay chưa.  Có thể gửi etag đã nhận được trong phản hồi trước đó để kiểm tra xem tài nguyên đã được cập nhật hay chưa, và nếu có, tải xuống phiên bản mới nhất của tài nguyên đó.
     4. Delete Contacts
 
