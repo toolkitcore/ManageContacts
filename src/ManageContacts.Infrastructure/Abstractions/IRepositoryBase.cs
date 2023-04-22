@@ -26,11 +26,11 @@ public interface IRepositoryBase<TEntity> where TEntity : class
 
     bool SaveChanges();
     
-    bool SaveChangesAsync();
+    Task<bool> SaveChangesAsync(CancellationToken cancellationToken);
 
-    Task<IDbContextTransaction> BeginTransactionAsync();
+    Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken);
 
-    Task EndTransactionAsync();
+    Task EndTransactionAsync(CancellationToken cancellationToken);
     
-    Task RollbackTransactionAsync();
+    Task RollbackTransactionAsync(CancellationToken cancellationToken);
 }
