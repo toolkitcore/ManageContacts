@@ -12,6 +12,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\ManageContacts.Entity\ManageContacts.Entity.csproj" />
+      <ProjectReference Include="..\ManageContacts.Shared\ManageContacts.Shared.csproj" />
     </ItemGroup>
 
 </Project>

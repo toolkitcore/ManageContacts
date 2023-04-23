@@ -6,23 +6,19 @@ public interface IRepositoryBase<TEntity> where TEntity : class
 {
     void Insert(TEntity entity);
         
-    void Insert(IEnumerable<TEntity> entities);
+    void Insert(IList<TEntity> entities);
         
     Task InsertAsync(TEntity entity, CancellationToken cancellationToken = default);
         
-    Task InsertAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default);
+    Task InsertAsync(IList<TEntity> entities, CancellationToken cancellationToken = default);
         
     void Update(TEntity entity);
         
-    void Update(IEnumerable<TEntity> entities);
+    void Update(IList<TEntity> entities);
         
     void Delete(TEntity entity);
         
-    void Delete(IEnumerable<TEntity> entities);
-
-    void Remove(TEntity entity);
-
-    void Remove(IEnumerable<TEntity> entities);
+    void Delete(IList<TEntity> entities);
 
     bool SaveChanges();
     

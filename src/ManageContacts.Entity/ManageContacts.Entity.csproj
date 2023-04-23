@@ -7,7 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="EFCore.BulkExtensions" Version="6.0.0" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.0" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\ManageContacts.Shared\ManageContacts.Shared.csproj" />
     </ItemGroup>
 
 </Project>

@@ -16,7 +16,6 @@ public class ContactsContext : ApplicationDbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.EnableSensitiveDataLogging();
-
         base.OnConfiguring(optionsBuilder);
     }
     
@@ -28,8 +27,6 @@ public class ContactsContext : ApplicationDbContext
             m.HasQueryFilter(x => !x.Deleted);
             m.Property(u => u.CreatedTime).HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
             m.Property(u => u.ModifiedTime).HasConversion(v => v, v => DateTime.SpecifyKind(v.Value, DateTimeKind.Utc));
-            m.HasOne(u => u.Creator).WithMany();
-            m.HasOne(u => u.Modifier).WithMany();
         });
 
         base.OnModelCreating(modelBuilder);

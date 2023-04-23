@@ -25,7 +25,7 @@ public interface IRepositoryQueryBase<TEntity> where TEntity : class
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
             bool disableTracking = true,
             int pageIndex = 1,
-            int pageSize = 25,
+            int pageSize = 10,
             int indexFrom = 1);
 
         Task<IPagedList<TEntity>> PagingAllAsync(
@@ -34,7 +34,7 @@ public interface IRepositoryQueryBase<TEntity> where TEntity : class
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
             bool disableTracking = true,
             int pageIndex = 1,
-            int pageSize = 25,
+            int pageSize = 10,
             int indexFrom = 1,
             CancellationToken cancellationToken = default);
 
