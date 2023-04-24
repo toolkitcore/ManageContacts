@@ -15,10 +15,14 @@ public interface IRepositoryBase<TEntity> where TEntity : class
     void Update(TEntity entity);
         
     void Update(IList<TEntity> entities);
-        
+
+    Task UpdateAsync(IList<TEntity> entities, CancellationToken cancellationToken = default);
+
     void Delete(TEntity entity);
         
     void Delete(IList<TEntity> entities);
+
+    Task DeleteAsync(IList<TEntity> entities, CancellationToken cancellationToken = default);
 
     bool SaveChanges();
     

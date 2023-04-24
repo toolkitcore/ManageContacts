@@ -14,7 +14,7 @@ public class ContactsContextFactory : IDesignTimeDbContextFactory<ContactsContex
     public ContactsContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<ContactsContext>();
-        optionsBuilder.UseSqlServer(@"Server=localhost;Database=ManageContacts;Trusted_Connection=True;", opts =>
+        optionsBuilder.UseSqlServer(@"data source=DOCHIHUNG\SQLEXPRESS;initial catalog=ManageContacts;integrated security=True;MultipleActiveResultSets=True;App=EntityFramework;TrustServerCertificate=True", opts =>
         {
             opts.CommandTimeout((int)TimeSpan.FromMinutes(10).TotalSeconds);
         });

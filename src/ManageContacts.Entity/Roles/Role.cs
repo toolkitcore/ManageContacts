@@ -1,6 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using ManageContacts.Entity.Abstractions.Audits;
+using ManageContacts.Entity.UserRoles;
+using ManageContacts.Entity.Users;
 
 namespace ManageContacts.Entity.Roles;
 
@@ -27,4 +29,14 @@ public class Role : IFullAuditEntity
 
     public Guid? ModifierId { get; set; }
     #endregion [AUDIT PROPERTIES]
+    
+    #region [REFERENCE PROPERTIES]
+    [ForeignKey(nameof(CreatorId))]
+    public virtual User Creator { get; set; }
+
+    [ForeignKey(nameof(ModifierId))]
+    public virtual User Modifier { get; set; }
+    #endregion
+    
+    public ICollection<UserRole> UserRoles { get; set; }
 }

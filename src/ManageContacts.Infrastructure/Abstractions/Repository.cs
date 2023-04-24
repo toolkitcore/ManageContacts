@@ -70,20 +70,34 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
 
     public void Insert(TEntity entity) 
         => _dbSet.Add(entity);
+    
     public void Insert(IList<TEntity> entities) 
         => _dbContext.BulkInsert<TEntity>(entities);
+    
     public async Task InsertAsync(TEntity entity, CancellationToken cancellationToken = default) 
         => await _dbSet.AddAsync(entity, cancellationToken);
+        
     public async Task InsertAsync(IList<TEntity> entities, CancellationToken cancellationToken = default) 
         => await _dbContext.BulkInsertAsync<TEntity>(entities, cancellationToken: cancellationToken);
+    
     public void Update(TEntity entity) 
         => _dbSet.Update(entity);
+    
     public void Update(IList<TEntity> entities) 
         => _dbContext.BulkUpdate<TEntity>(entities);
+
+    public async Task UpdateAsync(IList<TEntity> entities, CancellationToken cancellationToken = default)
+        => await _dbContext.BulkUpdateAsync<TEntity>(entities, cancellationToken: cancellationToken);
+
     public void Delete(TEntity entity) 
         => _dbSet.Remove(entity);
+    
     public void Delete(IList<TEntity> entities) 
         => _dbContext.BulkDelete<TEntity>(entities);
+
+    public async Task DeleteAsync(IList<TEntity> entities, CancellationToken cancellationToken = default)
+        => await _dbContext.BulkDeleteAsync<TEntity>(entities, cancellationToken: cancellationToken);
+
     public bool SaveChanges() 
         => _dbContext.SaveChanges() > 0;
 

@@ -1,19 +1,23 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 using ManageContacts.Entity.Abstractions.Audits;
-using ManageContacts.Entity.Groups;
-using ManageContacts.Entity.Roles;
+using ManageContacts.Entity.Contacts;
 using ManageContacts.Entity.Users;
 
-namespace ManageContacts.Entity.Contacts;
+namespace ManageContacts.Entity.Groups;
 
-public class Contact : IFullAuditEntity
-{
+public class Group : IFullAuditEntity
+{   
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid ContactId { get; set; }
-    
     public Guid GroupId { get; set; }
+    
+    [Required]
+    [StringLength(255)]
+    public string Name { get; set; }
+    
+    public string? Description { get; set; }
     
     #region [AUDIT PROPERTIES]
     public bool Deleted { get; set; }
@@ -29,8 +33,6 @@ public class Contact : IFullAuditEntity
 
     [ForeignKey(nameof(ModifierId))]
     public virtual User Modifier { get; set; }
-    
-    [ForeignKey(nameof(GroupId))]
-    public virtual Group Group { get; set; }
+    public ICollection<Contact> Contacts { get; set; }
     #endregion [REFERENCE PROPERTIES]
 }

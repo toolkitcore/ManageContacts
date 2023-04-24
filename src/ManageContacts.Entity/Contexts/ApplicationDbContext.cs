@@ -97,6 +97,7 @@ public class ApplicationDbContext : DbContext
         await DbContextBulkExtensions.BulkDeleteAsync<TEntity>(this, listEntities, cancellationToken : cancellationToken);
     }
 
+    #region [Private methods]
     private void ApplyAuditFieldsToModifiedEntities()
     {
         var modified = ChangeTracker.Entries()
@@ -132,5 +133,6 @@ public class ApplicationDbContext : DbContext
             }
         }
     }
+    #endregion
     
 }
