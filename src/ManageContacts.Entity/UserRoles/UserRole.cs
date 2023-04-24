@@ -11,10 +11,8 @@ public class UserRole : ICreationAuditEntity
     public Guid RoleId { get; set; }
     
     #region [AUDIT PROPERTIES]
-
     public DateTime CreatedTime { get; set; }
     public Guid? CreatorId { get; set; }
-    
     #endregion [AUDIT PROPERTIES]
     
     #region [REFERENCE PROPERTIES]

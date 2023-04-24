@@ -24,14 +24,26 @@ public class ContactsContext : ApplicationDbContext
     // Phương thức này thi hành khi EnsureCreatedAsync chạy, tại đây gọi các Fluent API mong muốn 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+        
         #region [Users]
         modelBuilder.Entity<User>(builder =>
         {
             builder.HasQueryFilter(u => !u.Deleted);
-            builder.Property(u => u.CreatedTime).HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
-            builder.Property(u => u.ModifiedTime).HasConversion(v => v, v => DateTime.SpecifyKind(v.Value, DateTimeKind.Utc));
-            builder.HasOne(u => u.Creator).WithMany().OnDelete(DeleteBehavior.NoAction);
-            builder.HasOne(u => u.Modifier).WithMany().OnDelete(DeleteBehavior.NoAction);
+            
+            builder.Property(u => u.CreatedTime)
+                .HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+            
+            builder.Property(u => u.ModifiedTime)
+                .HasConversion(v => v, v => DateTime.SpecifyKind(v.Value, DateTimeKind.Utc));
+            
+            builder.HasOne(u => u.Creator)
+                .WithMany()
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            builder.HasOne(u => u.Modifier)
+                .WithMany()
+                .OnDelete(DeleteBehavior.NoAction);
         });
         #endregion
 
@@ -39,10 +51,20 @@ public class ContactsContext : ApplicationDbContext
         modelBuilder.Entity<Role>(builder =>
         {
             builder.HasQueryFilter(x => !x.Deleted);
-            builder.Property(u => u.CreatedTime).HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
-            builder.Property(u => u.ModifiedTime).HasConversion(v => v, v => DateTime.SpecifyKind(v.Value, DateTimeKind.Utc));
-            builder.HasOne(u => u.Creator).WithMany().OnDelete(DeleteBehavior.NoAction);
-            builder.HasOne(u => u.Modifier).WithMany().OnDelete(DeleteBehavior.NoAction);
+            
+            builder.Property(u => u.CreatedTime)
+                .HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+            
+            builder.Property(u => u.ModifiedTime)
+                .HasConversion(v => v, v => DateTime.SpecifyKind(v.Value, DateTimeKind.Utc));
+            
+            builder.HasOne(u => u.Creator)
+                .WithMany()
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            builder.HasOne(u => u.Modifier)
+                .WithMany()
+                .OnDelete(DeleteBehavior.NoAction);
         });
         #endregion
 
@@ -51,30 +73,31 @@ public class ContactsContext : ApplicationDbContext
         {
             builder.HasKey(ur => new { ur.UserId, ur.RoleId });
             
-            builder.HasOne<User>(sc => sc.User)
-                .WithMany(s => s.UserRoles)
-                .HasForeignKey(sc => sc.UserId);
-            
-            builder.HasOne<Role>(sc => sc.Role)
-                .WithMany(s => s.UserRoles)
-                .HasForeignKey(sc => sc.RoleId);
-            
-            builder.HasOne(u => u.Creator).WithOne().OnDelete(DeleteBehavior.NoAction);
-            builder.HasOne(u => u.User).WithOne().OnDelete(DeleteBehavior.Cascade);
-            builder.HasOne(u => u.Role).WithOne().OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(ur => ur.Creator)
+                .WithMany()
+                .OnDelete(DeleteBehavior.NoAction);
         });
         
         #endregion
         
-
         #region [Contacts]
         modelBuilder.Entity<Contact>(builder =>
         {
             builder.HasQueryFilter(x => !x.Deleted);
-            builder.Property(u => u.CreatedTime).HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
-            builder.Property(u => u.ModifiedTime).HasConversion(v => v, v => DateTime.SpecifyKind(v.Value, DateTimeKind.Utc));
-            builder.HasOne(u => u.Creator).WithMany().OnDelete(DeleteBehavior.NoAction);
-            builder.HasOne(u => u.Modifier).WithMany().OnDelete(DeleteBehavior.NoAction);
+            
+            builder.Property(u => u.CreatedTime)
+                .HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+            
+            builder.Property(u => u.ModifiedTime)
+                .HasConversion(v => v, v => DateTime.SpecifyKind(v.Value, DateTimeKind.Utc));
+           
+            builder.HasOne(u => u.Creator)
+                .WithMany()
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            builder.HasOne(u => u.Modifier)
+                .WithMany()
+                .OnDelete(DeleteBehavior.NoAction);
         });
 
         #endregion
@@ -83,10 +106,20 @@ public class ContactsContext : ApplicationDbContext
         modelBuilder.Entity<Group>(builder =>
         {
             builder.HasQueryFilter(x => !x.Deleted);
-            builder.Property(u => u.CreatedTime).HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
-            builder.Property(u => u.ModifiedTime).HasConversion(v => v, v => DateTime.SpecifyKind(v.Value, DateTimeKind.Utc));
-            builder.HasOne(u => u.Creator).WithMany().OnDelete(DeleteBehavior.NoAction);
-            builder.HasOne(u => u.Modifier).WithMany().OnDelete(DeleteBehavior.NoAction);
+            
+            builder.Property(u => u.CreatedTime)
+                .HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+            
+            builder.Property(u => u.ModifiedTime)
+                .HasConversion(v => v, v => DateTime.SpecifyKind(v.Value, DateTimeKind.Utc));
+            
+            builder.HasOne(u => u.Creator)
+                .WithMany()
+                .OnDelete(DeleteBehavior.NoAction);
+            
+            builder.HasOne(u => u.Modifier)
+                .WithMany()
+                .OnDelete(DeleteBehavior.NoAction);
         });
         #endregion
 
@@ -97,7 +130,6 @@ public class ContactsContext : ApplicationDbContext
         #region [Phone Types]
         
         #endregion
-        base.OnModelCreating(modelBuilder);
     }
 
     public DbSet<User> Users { get; set; }

@@ -5,10 +5,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ManageContacts.Entity.Migrations
 {
-    /// <inheritdoc />
-    public partial class InitDatabase : Migration
+    public partial class update : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -135,24 +133,31 @@ namespace ManageContacts.Entity.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RoleUser",
+                name: "UserRole",
                 columns: table => new
                 {
-                    RolesRoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UsersUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RoleUser", x => new { x.RolesRoleId, x.UsersUserId });
+                    table.PrimaryKey("PK_UserRole", x => new { x.UserId, x.RoleId });
                     table.ForeignKey(
-                        name: "FK_RoleUser_Roles_RolesRoleId",
-                        column: x => x.RolesRoleId,
+                        name: "FK_UserRole_Roles_RoleId",
+                        column: x => x.RoleId,
                         principalTable: "Roles",
                         principalColumn: "RoleId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_RoleUser_Users_UsersUserId",
-                        column: x => x.UsersUserId,
+                        name: "FK_UserRole_Users_CreatorId",
+                        column: x => x.CreatorId,
+                        principalTable: "Users",
+                        principalColumn: "UserId");
+                    table.ForeignKey(
+                        name: "FK_UserRole_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
@@ -194,9 +199,14 @@ namespace ManageContacts.Entity.Migrations
                 column: "ModifierId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RoleUser_UsersUserId",
-                table: "RoleUser",
-                column: "UsersUserId");
+                name: "IX_UserRole_CreatorId",
+                table: "UserRole",
+                column: "CreatorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserRole_RoleId",
+                table: "UserRole",
+                column: "RoleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_CreatorId",
@@ -209,14 +219,13 @@ namespace ManageContacts.Entity.Migrations
                 column: "ModifierId");
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
                 name: "Contacts");
 
             migrationBuilder.DropTable(
-                name: "RoleUser");
+                name: "UserRole");
 
             migrationBuilder.DropTable(
                 name: "Groups");

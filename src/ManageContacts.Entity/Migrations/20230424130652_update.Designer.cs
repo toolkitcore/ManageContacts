@@ -12,18 +12,17 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ManageContacts.Entity.Migrations
 {
     [DbContext(typeof(ContactsContext))]
-    [Migration("20230423152228_Init-Database")]
-    partial class InitDatabase
+    [Migration("20230424130652_update")]
+    partial class update
     {
-        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.5")
+                .HasAnnotation("ProductVersion", "6.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
             modelBuilder.Entity("ManageContacts.Entity.Contacts.Contact", b =>
                 {
@@ -142,6 +141,30 @@ namespace ManageContacts.Entity.Migrations
                     b.ToTable("Roles");
                 });
 
+            modelBuilder.Entity("ManageContacts.Entity.UserRoles.UserRole", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatorId")
+                        .IsRequired()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("UserRole");
+                });
+
             modelBuilder.Entity("ManageContacts.Entity.Users.User", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -212,21 +235,6 @@ namespace ManageContacts.Entity.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("RoleUser", b =>
-                {
-                    b.Property<Guid>("RolesRoleId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("UsersUserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("RolesRoleId", "UsersUserId");
-
-                    b.HasIndex("UsersUserId");
-
-                    b.ToTable("RoleUser");
-                });
-
             modelBuilder.Entity("ManageContacts.Entity.Contacts.Contact", b =>
                 {
                     b.HasOne("ManageContacts.Entity.Users.User", "Creator")
@@ -292,6 +300,33 @@ namespace ManageContacts.Entity.Migrations
                     b.Navigation("Modifier");
                 });
 
+            modelBuilder.Entity("ManageContacts.Entity.UserRoles.UserRole", b =>
+                {
+                    b.HasOne("ManageContacts.Entity.Users.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("ManageContacts.Entity.Roles.Role", "Role")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ManageContacts.Entity.Users.User", "User")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Creator");
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ManageContacts.Entity.Users.User", b =>
                 {
                     b.HasOne("ManageContacts.Entity.Users.User", "Creator")
@@ -311,24 +346,19 @@ namespace ManageContacts.Entity.Migrations
                     b.Navigation("Modifier");
                 });
 
-            modelBuilder.Entity("RoleUser", b =>
-                {
-                    b.HasOne("ManageContacts.Entity.Roles.Role", null)
-                        .WithMany()
-                        .HasForeignKey("RolesRoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ManageContacts.Entity.Users.User", null)
-                        .WithMany()
-                        .HasForeignKey("UsersUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("ManageContacts.Entity.Groups.Group", b =>
                 {
                     b.Navigation("Contacts");
+                });
+
+            modelBuilder.Entity("ManageContacts.Entity.Roles.Role", b =>
+                {
+                    b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("ManageContacts.Entity.Users.User", b =>
+                {
+                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }
