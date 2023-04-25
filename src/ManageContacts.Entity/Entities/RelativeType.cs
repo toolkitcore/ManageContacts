@@ -3,11 +3,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ManageContacts.Entity.Entities;
 
-public class EmailType
+public class RelativeType
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid EmailTypeId { get; set; }
+    public Guid RelativeTypeId { get; set; }
     
     [Required]
     [StringLength(100)]

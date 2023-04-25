@@ -10,7 +10,26 @@ public class Contact : IFullAuditEntity
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid ContactId { get; set; }
     
+    [Required]
+    [StringLength(100)]
+    public string FirstName { get; set; }
+ 
+    [Required]
+    [StringLength(100)]
+    public string LastName { get; set; }
+    
+    [Required]
+    [StringLength(100)]
+    public string NickName { get; set; }
+    
+    public DateTime? Birthday { get; set; }
+    
+    [StringLength(1000)]
+    public string? Note { get; set; }
+    
     public Guid GroupId { get; set; }
+    
+    public Guid CompanyId { get; set; }
     
     #region [AUDIT PROPERTIES]
     public bool Deleted { get; set; }
@@ -22,8 +41,20 @@ public class Contact : IFullAuditEntity
     
     #region [REFERENCE PROPERTIES]
     public virtual User Creator { get; set; }
+    
     public virtual User Modifier { get; set; }
     
     public virtual Group Group { get; set; }
+    
+    public virtual Company Company { get; set; }
+    
+    public ICollection<ContactPhone> Phones { get; set; }
+    
+    public ICollection<ContactEmail> Emails { get; set; }
+    
+    public ICollection<ContactAddress> Addresses { get; set; }
+    
+    public ICollection<ContactRelative> Relatives { get; set; }
+
     #endregion [REFERENCE PROPERTIES]
 }

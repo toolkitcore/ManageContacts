@@ -30,5 +30,27 @@ public class ContactConfiguration : IEntityTypeConfiguration<Contact>
             .WithMany(g => g.Contacts)
             .HasForeignKey(c => c.GroupId)
             .IsRequired(false);
+        
+        builder.HasOne<Company>(c => c.Company)
+            .WithOne(c => c.Contact)
+            .HasForeignKey<Company>(c => c.CompanyId)
+            .IsRequired(false);
+
+        builder.HasMany(c => c.Addresses)
+            .WithOne(ca => ca.Contact)
+            .HasForeignKey(ca => ca.ContactId);
+        
+        builder.HasMany(c => c.Phones)
+            .WithOne(cp => cp.Contact)
+            .HasForeignKey(cp => cp.ContactId);
+        
+        builder.HasMany(c => c.Emails)
+            .WithOne(ce => ce.Contact)
+            .HasForeignKey(ce => ce.ContactId);
+        
+        builder.HasMany(c => c.Relatives)
+            .WithOne(cr => cr.Contact)
+            .HasForeignKey(cr => cr.ContactId);
+        
     }
 }

@@ -3,24 +3,21 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ManageContacts.Entity.Entities;
 
-public class ContactEmail
+public class District
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid ContactEmailId { get; set; }
+    public Guid DistrictId { get; set; }
     
     [Required]
-    [EmailAddress]
     [StringLength(100)]
-    public string Email { get; set; }
+    public string Name { get; set; }
     
-    public Guid EmailTypeId { get; set; }
+    public string Status { get; set; }
     
-    public Guid ContactId { get; set; }
+    public Guid ProvinceId { get; set; }
     
     #region [REFERENCE PROPERTIES]
-    public virtual EmailType EmailType { get; set; }
-    
-    public virtual Contact Contact { get; set; }
+    public virtual Province Province { get; set; }
     #endregion [REFERENCE PROPERTIES]
 }

@@ -17,7 +17,6 @@ public class User : IFullAuditEntity
     public string UserName { get; set; }
     
     [Required]
-    [StringLength(255)]
     public string PasswordHashed { get; set; }
     
     [Required]
@@ -30,11 +29,11 @@ public class User : IFullAuditEntity
     public string Email { get; set; }
 
     [Required]
-    [StringLength(50)]
+    [StringLength(100)]
     public string FirstName { get; set; }
     
     [Required]
-    [StringLength(50)]
+    [StringLength(100)]
     public string LastName { get; set; }
     
     [Required]
@@ -56,6 +55,7 @@ public class User : IFullAuditEntity
     
     #region [REFERENCE PROPERTIES]
     public virtual User Creator { get; set; }
+    
     public virtual User Modifier { get; set; }
     
     public ICollection<UserRole> UserRoles { get; set; }
