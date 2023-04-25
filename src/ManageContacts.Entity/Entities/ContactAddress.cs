@@ -24,9 +24,12 @@ public class ContactAddress
     [StringLength(1000)]
     public string Address { get; set; }
     
+    public Guid AddressTypeId { get; set; }
     public Guid ContactId { get; set; }
     
     #region [REFERENCE PROPERTIES]
+    public virtual AddressType AddressType { get; set; }
+    
     public virtual Contact Contact { get; set; }
     #endregion [REFERENCE PROPERTIES]
 }

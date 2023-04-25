@@ -8,6 +8,6 @@ public class CompanyConfiguration : IEntityTypeConfiguration<Company>
 {
     public void Configure(EntityTypeBuilder<Company> builder)
     {
-        throw new NotImplementedException();
+        
     }
 }

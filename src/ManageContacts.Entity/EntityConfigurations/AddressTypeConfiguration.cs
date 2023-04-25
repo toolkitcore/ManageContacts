@@ -26,9 +26,9 @@ public class AddressTypeConfiguration : IEntityTypeConfiguration<AddressType>
             .HasForeignKey(u => u.ModifierId)
             .IsRequired(false);
 
-        builder.HasOne(a => a.Contact)
+        builder.HasOne(c => c.Contact)
             .WithMany()
-            .HasForeignKey(a => a.CreatorId)
+            .HasForeignKey(c => c.ContactId)
             .IsRequired(false);
     }
 }

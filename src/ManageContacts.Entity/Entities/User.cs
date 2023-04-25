@@ -59,5 +59,8 @@ public class User : IFullAuditEntity
     public virtual User Modifier { get; set; }
     
     public ICollection<UserRole> UserRoles { get; set; }
+    
+    public ICollection<Contact> Contacts { get; set; }
+    
     #endregion [REFERENCE PROPERTIES]
 }

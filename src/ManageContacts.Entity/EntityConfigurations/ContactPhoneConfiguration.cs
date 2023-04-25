@@ -8,6 +8,9 @@ public class ContactPhoneConfiguration : IEntityTypeConfiguration<ContactPhone>
 {
     public void Configure(EntityTypeBuilder<ContactPhone> builder)
     {
-        throw new NotImplementedException();
+        builder.HasOne(pt => pt.PhoneType)
+            .WithMany()
+            .HasForeignKey(pt => pt.PhoneTypeId)
+            .IsRequired();
     }
 }

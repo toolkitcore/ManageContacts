@@ -28,9 +28,7 @@ public class Contact : IFullAuditEntity
     public string? Note { get; set; }
     
     public Guid GroupId { get; set; }
-    
-    public Guid CompanyId { get; set; }
-    
+
     #region [AUDIT PROPERTIES]
     public bool Deleted { get; set; }
     public DateTime CreatedTime { get; set; }

@@ -8,6 +8,9 @@ public class ContactEmailConfiguration : IEntityTypeConfiguration<ContactEmail>
 {
     public void Configure(EntityTypeBuilder<ContactEmail> builder)
     {
-        throw new NotImplementedException();
+        builder.HasOne(ce => ce.EmailType)
+            .WithMany()
+            .HasForeignKey(ce => ce.EmailTypeId)
+            .IsRequired();
     }
 }

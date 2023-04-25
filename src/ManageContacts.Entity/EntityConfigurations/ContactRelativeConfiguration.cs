@@ -4,10 +4,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ManageContacts.Entity.EntityConfigurations;
 
-public class RelativeConfiguration : IEntityTypeConfiguration<ContactRelative>
+public class ContactRelativeConfiguration : IEntityTypeConfiguration<ContactRelative>
 {
     public void Configure(EntityTypeBuilder<ContactRelative> builder)
     {
-        throw new NotImplementedException();
+        builder.HasOne(pt => pt.RelativeType)
+            .WithMany()
+            .HasForeignKey(pt => pt.RelativeTypeId)
+            .IsRequired();
     }
 }
