@@ -16,16 +16,11 @@ public class ContactConfiguration : IEntityTypeConfiguration<Contact>
         builder.Property(u => u.ModifiedTime)
             .HasConversion(v => v, v => DateTime.SpecifyKind(v.Value, DateTimeKind.Utc));
            
-        builder.HasOne(u => u.Creator)
-            .WithMany()
-            .HasForeignKey(u => u.CreatorId)
+        builder.HasOne(u => u.User)
+            .WithMany(u => u.Contacts)
+            .HasForeignKey(u => u.UserId)
             .IsRequired(false);
-        
-        builder.HasOne(u => u.Modifier)
-            .WithMany()
-            .HasForeignKey(u => u.ModifierId)
-            .IsRequired(false);
-        
+
         builder.HasOne(c => c.Group)
             .WithMany(g => g.Contacts)
             .HasForeignKey(c => c.GroupId)

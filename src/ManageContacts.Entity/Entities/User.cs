@@ -62,5 +62,7 @@ public class User : IFullAuditEntity
     
     public ICollection<Contact> Contacts { get; set; }
     
+    public ICollection<Group> Groups { get; set; }
+    
     #endregion [REFERENCE PROPERTIES]
 }

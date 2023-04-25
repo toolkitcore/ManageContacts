@@ -4,6 +4,7 @@ using ManageContacts.Entity.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ManageContacts.Entity.Migrations
 {
     [DbContext(typeof(ContactsContext))]
-    partial class ContactsContextModelSnapshot : ModelSnapshot
+    [Migration("20230425083503_v2")]
+    partial class v2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,6 +36,9 @@ namespace ManageContacts.Entity.Migrations
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
@@ -44,6 +49,9 @@ namespace ManageContacts.Entity.Migrations
                     b.Property<DateTime?>("ModifiedTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("ModifierId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -52,6 +60,10 @@ namespace ManageContacts.Entity.Migrations
                     b.HasKey("AddressTypeId");
 
                     b.HasIndex("ContactId");
+
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("ModifierId");
 
                     b.ToTable("AddressTypes");
                 });
@@ -526,7 +538,19 @@ namespace ManageContacts.Entity.Migrations
                         .WithMany()
                         .HasForeignKey("ContactId");
 
+                    b.HasOne("ManageContacts.Entity.Entities.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId");
+
+                    b.HasOne("ManageContacts.Entity.Entities.User", "Modifier")
+                        .WithMany()
+                        .HasForeignKey("ModifierId");
+
                     b.Navigation("Contact");
+
+                    b.Navigation("Creator");
+
+                    b.Navigation("Modifier");
                 });
 
             modelBuilder.Entity("ManageContacts.Entity.Entities.Company", b =>

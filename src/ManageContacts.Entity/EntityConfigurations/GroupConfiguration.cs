@@ -16,14 +16,9 @@ public class GroupConfiguration : IEntityTypeConfiguration<Group>
         builder.Property(u => u.ModifiedTime)
             .HasConversion(v => v, v => DateTime.SpecifyKind(v.Value, DateTimeKind.Utc));
         
-        builder.HasOne(u => u.Creator)
-            .WithMany()
-            .HasForeignKey(u => u.CreatorId)
-            .IsRequired(false);
-        
-        builder.HasOne(u => u.Modifier)
-            .WithMany()
-            .HasForeignKey(u => u.ModifierId)
+        builder.HasOne(u => u.User)
+            .WithMany(u => u.Groups)
+            .HasForeignKey(u => u.UserId)
             .IsRequired(false);
     }
 }

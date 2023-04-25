@@ -32,10 +32,5 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasForeignKey(u => u.ModifierId)
             .IsRequired(false);
 
-        builder.HasMany(u => u.Contacts)
-            .WithOne(c => c.Creator)
-            .HasForeignKey(c => c.CreatorId)
-            .IsRequired(false);
-
     }
 }

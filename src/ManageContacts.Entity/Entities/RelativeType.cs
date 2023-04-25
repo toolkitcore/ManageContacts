@@ -22,19 +22,11 @@ public class RelativeType
     public bool Deleted { get; set; }
     
     public DateTime CreatedTime { get; set; }
-    
-    public Guid? CreatorId { get; set; }
-    
+
     public DateTime? ModifiedTime { get; set; }
-    
-    public Guid? ModifierId { get; set; }
     #endregion [AUDIT PROPERTIES]
     
     #region [REFERENCE PROPERTIES]
-    public virtual User Creator { get; set; }
-    
-    public virtual User Modifier { get; set; }
-    
     public virtual Contact Contact { get; set; }
     #endregion [REFERENCE PROPERTIES]
 }
