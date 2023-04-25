@@ -31,8 +31,4 @@
       <ProjectReference Include="..\ManageContacts.Shared\ManageContacts.Shared.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Migrations" />
-    </ItemGroup>
-
 </Project>

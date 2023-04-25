@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ManageContacts.Entity.Migrations
 {
     [DbContext(typeof(ContactsContext))]
-    [Migration("20230424130652_update")]
+    [Migration("20230424175052_update")]
     partial class update
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,7 +34,6 @@ namespace ManageContacts.Entity.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("CreatorId")
-                        .IsRequired()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("Deleted")
@@ -47,7 +46,6 @@ namespace ManageContacts.Entity.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("ModifierId")
-                        .IsRequired()
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("ContactId");
@@ -71,7 +69,6 @@ namespace ManageContacts.Entity.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("CreatorId")
-                        .IsRequired()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("Deleted")
@@ -84,7 +81,6 @@ namespace ManageContacts.Entity.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("ModifierId")
-                        .IsRequired()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
@@ -111,26 +107,25 @@ namespace ManageContacts.Entity.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("CreatorId")
-                        .IsRequired()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTime?>("ModifiedTime")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("ModifierId")
-                        .IsRequired()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(3)
-                        .HasColumnType("nvarchar(3)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("RoleId");
 
@@ -153,7 +148,6 @@ namespace ManageContacts.Entity.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("CreatorId")
-                        .IsRequired()
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("UserId", "RoleId");
@@ -162,7 +156,7 @@ namespace ManageContacts.Entity.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("UserRole");
+                    b.ToTable("UserRoles");
                 });
 
             modelBuilder.Entity("ManageContacts.Entity.Users.User", b =>
@@ -172,13 +166,13 @@ namespace ManageContacts.Entity.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Avatar")
-                        .HasColumnType("nvarchar(max)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
 
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("CreatorId")
-                        .IsRequired()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("Deleted")
@@ -187,7 +181,8 @@ namespace ManageContacts.Entity.Migrations
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -203,7 +198,6 @@ namespace ManageContacts.Entity.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("ModifierId")
-                        .IsRequired()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("PasswordHashed")
@@ -219,7 +213,8 @@ namespace ManageContacts.Entity.Migrations
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("UserName")
                         .IsRequired()
@@ -239,21 +234,15 @@ namespace ManageContacts.Entity.Migrations
                 {
                     b.HasOne("ManageContacts.Entity.Users.User", "Creator")
                         .WithMany()
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .HasForeignKey("CreatorId");
 
                     b.HasOne("ManageContacts.Entity.Groups.Group", "Group")
                         .WithMany("Contacts")
-                        .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("GroupId");
 
                     b.HasOne("ManageContacts.Entity.Users.User", "Modifier")
                         .WithMany()
-                        .HasForeignKey("ModifierId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .HasForeignKey("ModifierId");
 
                     b.Navigation("Creator");
 
@@ -266,15 +255,11 @@ namespace ManageContacts.Entity.Migrations
                 {
                     b.HasOne("ManageContacts.Entity.Users.User", "Creator")
                         .WithMany()
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .HasForeignKey("CreatorId");
 
                     b.HasOne("ManageContacts.Entity.Users.User", "Modifier")
                         .WithMany()
-                        .HasForeignKey("ModifierId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .HasForeignKey("ModifierId");
 
                     b.Navigation("Creator");
 
@@ -285,15 +270,11 @@ namespace ManageContacts.Entity.Migrations
                 {
                     b.HasOne("ManageContacts.Entity.Users.User", "Creator")
                         .WithMany()
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .HasForeignKey("CreatorId");
 
                     b.HasOne("ManageContacts.Entity.Users.User", "Modifier")
                         .WithMany()
-                        .HasForeignKey("ModifierId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .HasForeignKey("ModifierId");
 
                     b.Navigation("Creator");
 
@@ -304,9 +285,7 @@ namespace ManageContacts.Entity.Migrations
                 {
                     b.HasOne("ManageContacts.Entity.Users.User", "Creator")
                         .WithMany()
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .HasForeignKey("CreatorId");
 
                     b.HasOne("ManageContacts.Entity.Roles.Role", "Role")
                         .WithMany("UserRoles")
@@ -331,15 +310,11 @@ namespace ManageContacts.Entity.Migrations
                 {
                     b.HasOne("ManageContacts.Entity.Users.User", "Creator")
                         .WithMany()
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .HasForeignKey("CreatorId");
 
                     b.HasOne("ManageContacts.Entity.Users.User", "Modifier")
                         .WithMany()
-                        .HasForeignKey("ModifierId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .HasForeignKey("ModifierId");
 
                     b.Navigation("Creator");
 

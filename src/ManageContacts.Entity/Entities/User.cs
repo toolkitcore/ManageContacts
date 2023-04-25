@@ -1,11 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using ManageContacts.Entity.Abstractions.Audits;
-using ManageContacts.Entity.Roles;
-using ManageContacts.Entity.UserRoles;
 using ManageContacts.Shared.AttributeExtensions;
 
-namespace ManageContacts.Entity.Users;
+namespace ManageContacts.Entity.Entities;
 
 public class User : IFullAuditEntity
 {
@@ -49,20 +47,17 @@ public class User : IFullAuditEntity
     #region [AUDIT PROPERTIES]
     public bool Deleted { get; set; }
     public DateTime CreatedTime { get; set; }
+    
     public Guid? CreatorId { get; set; }
     public DateTime? ModifiedTime { get; set; }
+    
     public Guid? ModifierId { get; set; }
     #endregion [AUDIT PROPERTIES]
     
     #region [REFERENCE PROPERTIES]
-    [ForeignKey(nameof(CreatorId))]
     public virtual User Creator { get; set; }
-
-    [ForeignKey(nameof(ModifierId))]
     public virtual User Modifier { get; set; }
     
     public ICollection<UserRole> UserRoles { get; set; }
     #endregion [REFERENCE PROPERTIES]
-    
-    
 }
