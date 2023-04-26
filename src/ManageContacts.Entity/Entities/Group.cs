@@ -21,12 +21,16 @@ public class Group : IFullAuditEntity
     #region [AUDIT PROPERTIES]
     public bool Deleted { get; set; }
     public DateTime CreatedTime { get; set; }
+    public Guid? CreatorId { get; set; }
     public DateTime? ModifiedTime { get; set; }
+    public Guid? ModifierId { get; set; }
+
     #endregion [AUDIT PROPERTIES]
     
     #region [REFERENCE PROPERTIES]
-    public virtual User User { get; set; }
+    public virtual User Creator { get; set; }
     
+    public virtual User Modifier { get; set; }
     public ICollection<Contact> Contacts { get; set; }
     #endregion [REFERENCE PROPERTIES]
 }

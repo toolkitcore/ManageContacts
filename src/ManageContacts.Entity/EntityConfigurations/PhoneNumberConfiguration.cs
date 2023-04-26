@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ManageContacts.Entity.EntityConfigurations;
 
-public class ContactPhoneConfiguration : IEntityTypeConfiguration<ContactPhone>
+public class PhoneNumberConfiguration : IEntityTypeConfiguration<PhoneNumber>
 {
-    public void Configure(EntityTypeBuilder<ContactPhone> builder)
+    public void Configure(EntityTypeBuilder<PhoneNumber> builder)
     {
         builder.HasOne(pt => pt.PhoneType)
             .WithMany()

@@ -26,31 +26,36 @@ public class Contact : IFullAuditEntity
     
     [StringLength(1000)]
     public string? Note { get; set; }
-    
-    public Guid UserId { get; set; }
     public Guid GroupId { get; set; }
 
     #region [AUDIT PROPERTIES]
     public bool Deleted { get; set; }
+    
     public DateTime CreatedTime { get; set; }
+    
+    public Guid? CreatorId { get; set; }
+    
     public DateTime? ModifiedTime { get; set; }
     
+    public Guid? ModifierId { get; set; }
+
     #endregion [AUDIT PROPERTIES]
     
     #region [REFERENCE PROPERTIES]
-    public virtual User User { get; set; }
+    public virtual User Creator { get; set; }
+    
+    public virtual User Modifier { get; set; }
     
     public virtual Group Group { get; set; }
     
     public virtual Company Company { get; set; }
     
-    public ICollection<ContactPhone> Phones { get; set; }
+    public ICollection<PhoneNumber> PhoneNumbers { get; set; }
     
-    public ICollection<ContactEmail> Emails { get; set; }
+    public ICollection<EmailAddress> EmailAddresses { get; set; }
     
-    public ICollection<ContactAddress> Addresses { get; set; }
+    public ICollection<Address> Addresses { get; set; }
     
-    public ICollection<ContactRelative> Relatives { get; set; }
-
+    public ICollection<Relative> Relatives { get; set; }
     #endregion [REFERENCE PROPERTIES]
 }

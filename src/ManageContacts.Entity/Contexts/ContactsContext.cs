@@ -21,33 +21,33 @@ public class ContactsContext : ApplicationDbContext
     // Phương thức này thi hành khi EnsureCreatedAsync chạy, tại đây gọi các Fluent API mong muốn 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfiguration(new UserConfiguration());
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(UserConfiguration).Assembly);
 
-        modelBuilder.ApplyConfiguration(new RoleConfiguration());
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(RoleConfiguration).Assembly);
 
-        modelBuilder.ApplyConfiguration(new UserRoleConfiguration());
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(UserRoleConfiguration).Assembly);
 
-        modelBuilder.ApplyConfiguration(new ContactConfiguration());
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ContactConfiguration).Assembly);
         
-        modelBuilder.ApplyConfiguration(new GroupConfiguration());
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(GroupConfiguration).Assembly);
         
-        modelBuilder.ApplyConfiguration(new CompanyConfiguration());
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(CompanyConfiguration).Assembly);
         
-        modelBuilder.ApplyConfiguration(new AddressTypeConfiguration());
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AddressTypeConfiguration).Assembly);
         
-        modelBuilder.ApplyConfiguration(new EmailTypeConfiguration());
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(EmailTypeConfiguration).Assembly);
         
-        modelBuilder.ApplyConfiguration(new PhoneTypeConfiguration());
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(PhoneTypeConfiguration).Assembly);
         
-        modelBuilder.ApplyConfiguration(new RelativeTypeConfiguration());
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(RelativeTypeConfiguration).Assembly);
         
-        modelBuilder.ApplyConfiguration(new ContactAddressConfiguration());
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AddressConfiguration).Assembly);
         
-        modelBuilder.ApplyConfiguration(new ContactEmailConfiguration());
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AddressConfiguration).Assembly);
         
-        modelBuilder.ApplyConfiguration(new ContactPhoneConfiguration());
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(PhoneNumberConfiguration).Assembly);
         
-        modelBuilder.ApplyConfiguration(new ContactRelativeConfiguration());
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(RelativeConfiguration).Assembly);
 
         base.OnModelCreating(modelBuilder);
     }
@@ -61,10 +61,10 @@ public class ContactsContext : ApplicationDbContext
     public DbSet<UserRole> UserRoles { get; set; }
     public DbSet<Group> Groups { get; set; }
     public DbSet<Contact> Contacts { get; set; }
-    public DbSet<ContactAddress> ContactAddresses { get; set; }
-    public DbSet<ContactEmail> ContactEmails { get; set; }
-    public DbSet<ContactPhone> ContactPhones { get; set; }
-    public DbSet<ContactRelative> ContactRelatives { get; set; }
+    public DbSet<Address> Addresses { get; set; }
+    public DbSet<EmailAddress> EmailAddresses { get; set; }
+    public DbSet<PhoneNumber> PhoneNumbers { get; set; }
+    public DbSet<Relative> Relatives { get; set; }
     public DbSet<Company> Companies { get; set; }
 
     

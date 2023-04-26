@@ -16,9 +16,14 @@ public class ContactConfiguration : IEntityTypeConfiguration<Contact>
         builder.Property(u => u.ModifiedTime)
             .HasConversion(v => v, v => DateTime.SpecifyKind(v.Value, DateTimeKind.Utc));
            
-        builder.HasOne(u => u.User)
+        builder.HasOne(u => u.Creator)
             .WithMany(u => u.Contacts)
-            .HasForeignKey(u => u.UserId)
+            .HasForeignKey(u => u.CreatorId)
+            .IsRequired(false);
+        
+        builder.HasOne(u => u.Modifier)
+            .WithMany(u => u.Contacts)
+            .HasForeignKey(u => u.Modifier)
             .IsRequired(false);
 
         builder.HasOne(c => c.Group)
@@ -36,12 +41,12 @@ public class ContactConfiguration : IEntityTypeConfiguration<Contact>
             .HasForeignKey(ca => ca.ContactId)
             .IsRequired();
 
-        builder.HasMany(c => c.Phones)
+        builder.HasMany(c => c.PhoneNumbers)
             .WithOne(cp => cp.Contact)
             .HasForeignKey(cp => cp.ContactId)
             .IsRequired();
 
-        builder.HasMany(c => c.Emails)
+        builder.HasMany(c => c.EmailAddresses)
             .WithOne(ce => ce.Contact)
             .HasForeignKey(ce => ce.ContactId)
             .IsRequired();

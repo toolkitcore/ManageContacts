@@ -16,9 +16,14 @@ public class RelativeTypeConfiguration : IEntityTypeConfiguration<RelativeType>
         builder.Property(u => u.ModifiedTime)
             .HasConversion(v => v, v => DateTime.SpecifyKind(v.Value, DateTimeKind.Utc));
 
-        builder.HasOne(c => c.Contact)
+        builder.HasOne(u => u.Creator)
             .WithMany()
-            .HasForeignKey(c => c.ContactId)
+            .HasForeignKey(u => u.CreatorId)
+            .IsRequired(false);
+        
+        builder.HasOne(u => u.Modifier)
+            .WithMany()
+            .HasForeignKey(u => u.ModifierId)
             .IsRequired(false);
     }
 }

@@ -8,7 +8,6 @@
 
     <ItemGroup>
       <Folder Include="Mapping\Roles" />
-      <Folder Include="Roles" />
     </ItemGroup>
 
     <ItemGroup>
@@ -18,6 +17,13 @@
       <PackageReference Include="FluentValidation" Version="11.5.2" />
       <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\ManageContacts.Entity\ManageContacts.Entity.csproj" />
+      <ProjectReference Include="..\ManageContacts.Infrastructure\ManageContacts.Infrastructure.csproj" />
+      <ProjectReference Include="..\ManageContacts.Model\ManageContacts.Model.csproj" />
+      <ProjectReference Include="..\ManageContacts.Shared\ManageContacts.Shared.csproj" />
     </ItemGroup>
 
 </Project>

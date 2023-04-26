@@ -3,32 +3,29 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ManageContacts.Entity.Entities;
 
-public class ContactAddress
+public class PhoneNumber
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid ContactAddressId { get; set; }
+    public Guid ContactPhoneId { get; set; }
     
     [Required]
+    [Phone]
     [StringLength(100)]
-    public string Province { get; set; }
+    public string Phone { get; set; }
     
-    [Required]
-    [StringLength(100)]
-    public string Ward { get; set; }
+    [StringLength(255)]
+    public string? Type { get; set; }
     
-    [Required]
-    [StringLength(100)]
-    public string District { get; set; }
+    [StringLength(255)]
+    public string? FormattedType { get; set; }
+
+    public Guid PhoneTypeId { get; set; }
     
-    [StringLength(1000)]
-    public string Address { get; set; }
-    
-    public Guid AddressTypeId { get; set; }
     public Guid ContactId { get; set; }
     
     #region [REFERENCE PROPERTIES]
-    public virtual AddressType AddressType { get; set; }
+    public virtual PhoneType PhoneType { get; set; }
     
     public virtual Contact Contact { get; set; }
     #endregion [REFERENCE PROPERTIES]

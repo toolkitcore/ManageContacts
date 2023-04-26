@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ManageContacts.Entity.EntityConfigurations;
 
-public class ContactAddressConfiguration : IEntityTypeConfiguration<ContactAddress>
+public class AddressConfiguration : IEntityTypeConfiguration<Address>
 {
-    public void Configure(EntityTypeBuilder<ContactAddress> builder)
+    public void Configure(EntityTypeBuilder<Address> builder)
     {
         builder.HasOne(ca => ca.AddressType)
             .WithMany()

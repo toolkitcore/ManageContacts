@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ManageContacts.Entity.EntityConfigurations;
 
-public class ContactRelativeConfiguration : IEntityTypeConfiguration<ContactRelative>
+public class RelativeConfiguration : IEntityTypeConfiguration<Relative>
 {
-    public void Configure(EntityTypeBuilder<ContactRelative> builder)
+    public void Configure(EntityTypeBuilder<Relative> builder)
     {
         builder.HasOne(pt => pt.RelativeType)
             .WithMany()
