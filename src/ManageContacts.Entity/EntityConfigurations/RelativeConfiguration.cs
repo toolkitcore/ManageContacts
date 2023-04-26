@@ -11,6 +11,6 @@ public class RelativeConfiguration : IEntityTypeConfiguration<Relative>
         builder.HasOne(pt => pt.RelativeType)
             .WithMany()
             .HasForeignKey(pt => pt.RelativeTypeId)
-            .IsRequired();
+            .IsRequired(false);
     }
 }

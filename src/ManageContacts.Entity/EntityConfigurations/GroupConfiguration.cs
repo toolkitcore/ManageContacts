@@ -13,17 +13,11 @@ public class GroupConfiguration : IEntityTypeConfiguration<Group>
         builder.Property(u => u.CreatedTime)
             .HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
         
-        builder.Property(u => u.ModifiedTime)
-            .HasConversion(v => v, v => DateTime.SpecifyKind(v.Value, DateTimeKind.Utc));
         
-        builder.HasOne(u => u.Creator)
+        builder.HasOne(u => u.User)
             .WithMany(u => u.Groups)
-            .HasForeignKey(u => u.Creator)
+            .HasForeignKey(u => u.UserId)
             .IsRequired(false);
-        
-        builder.HasOne(u => u.Modifier)
-            .WithMany(u => u.Groups)
-            .HasForeignKey(u => u.Modifier)
-            .IsRequired(false);
+
     }
 }

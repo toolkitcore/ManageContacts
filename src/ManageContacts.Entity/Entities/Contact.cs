@@ -4,7 +4,7 @@ using ManageContacts.Entity.Abstractions.Audits;
 
 namespace ManageContacts.Entity.Entities;
 
-public class Contact : IFullAuditEntity
+public class Contact 
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -33,19 +33,12 @@ public class Contact : IFullAuditEntity
     
     public DateTime CreatedTime { get; set; }
     
-    public Guid? CreatorId { get; set; }
-    
-    public DateTime? ModifiedTime { get; set; }
-    
-    public Guid? ModifierId { get; set; }
-
+    public Guid UserId { get; set; }
     #endregion [AUDIT PROPERTIES]
     
     #region [REFERENCE PROPERTIES]
-    public virtual User Creator { get; set; }
-    
-    public virtual User Modifier { get; set; }
-    
+    public virtual User User { get; set; }
+
     public virtual Group Group { get; set; }
     
     public virtual Company Company { get; set; }

@@ -22,17 +22,66 @@ namespace ManageContacts.Entity.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("ManageContacts.Entity.Entities.Address", b =>
+                {
+                    b.Property<Guid>("ContactAddressId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AddressTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Addresss")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<Guid>("ContactId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("District")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("FormattedType")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Province")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Type")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Ward")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("ContactAddressId");
+
+                    b.HasIndex("AddressTypeId");
+
+                    b.HasIndex("ContactId");
+
+                    b.ToTable("Addresses");
+                });
+
             modelBuilder.Entity("ManageContacts.Entity.Entities.AddressType", b =>
                 {
                     b.Property<Guid>("AddressTypeId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ContactId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
@@ -44,14 +93,24 @@ namespace ManageContacts.Entity.Migrations
                     b.Property<DateTime?>("ModifiedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Name")
+                    b.Property<Guid?>("ModifierId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TypeName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("UnaccentedName")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
                     b.HasKey("AddressTypeId");
 
-                    b.HasIndex("ContactId");
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("ModifierId");
 
                     b.ToTable("AddressTypes");
                 });
@@ -107,9 +166,6 @@ namespace ManageContacts.Entity.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("NickName")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -131,48 +187,7 @@ namespace ManageContacts.Entity.Migrations
                     b.ToTable("Contacts");
                 });
 
-            modelBuilder.Entity("ManageContacts.Entity.Entities.ContactAddress", b =>
-                {
-                    b.Property<Guid>("ContactAddressId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<Guid>("AddressTypeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ContactId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("District")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Province")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Ward")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("ContactAddressId");
-
-                    b.HasIndex("AddressTypeId");
-
-                    b.HasIndex("ContactId");
-
-                    b.ToTable("ContactAddresses");
-                });
-
-            modelBuilder.Entity("ManageContacts.Entity.Entities.ContactEmail", b =>
+            modelBuilder.Entity("ManageContacts.Entity.Entities.EmailAddress", b =>
                 {
                     b.Property<Guid>("ContactEmailId")
                         .ValueGeneratedOnAdd()
@@ -189,65 +204,21 @@ namespace ManageContacts.Entity.Migrations
                     b.Property<Guid>("EmailTypeId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("FormattedType")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Type")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
                     b.HasKey("ContactEmailId");
 
                     b.HasIndex("ContactId");
 
                     b.HasIndex("EmailTypeId");
 
-                    b.ToTable("ContactEmails");
-                });
-
-            modelBuilder.Entity("ManageContacts.Entity.Entities.ContactPhone", b =>
-                {
-                    b.Property<Guid>("ContactPhoneId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ContactId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<Guid>("PhoneTypeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("ContactPhoneId");
-
-                    b.HasIndex("ContactId");
-
-                    b.HasIndex("PhoneTypeId");
-
-                    b.ToTable("ContactPhones");
-                });
-
-            modelBuilder.Entity("ManageContacts.Entity.Entities.ContactRelative", b =>
-                {
-                    b.Property<Guid>("ContactRelativeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ContactId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<Guid>("RelativeTypeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("ContactRelativeId");
-
-                    b.HasIndex("ContactId");
-
-                    b.HasIndex("RelativeTypeId");
-
-                    b.ToTable("ContactRelatives");
+                    b.ToTable("EmailAddresses");
                 });
 
             modelBuilder.Entity("ManageContacts.Entity.Entities.EmailType", b =>
@@ -256,11 +227,11 @@ namespace ManageContacts.Entity.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ContactId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
@@ -272,14 +243,24 @@ namespace ManageContacts.Entity.Migrations
                     b.Property<DateTime?>("ModifiedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Name")
+                    b.Property<Guid?>("ModifierId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TypeName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("UnaccentedName")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
                     b.HasKey("EmailTypeId");
 
-                    b.HasIndex("ContactId");
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("ModifierId");
 
                     b.ToTable("EmailTypes");
                 });
@@ -299,15 +280,12 @@ namespace ManageContacts.Entity.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("ModifiedTime")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid?>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("GroupId");
@@ -317,17 +295,51 @@ namespace ManageContacts.Entity.Migrations
                     b.ToTable("Groups");
                 });
 
+            modelBuilder.Entity("ManageContacts.Entity.Entities.PhoneNumber", b =>
+                {
+                    b.Property<Guid>("ContactPhoneId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ContactId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FormattedType")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("PhoneTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Type")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("ContactPhoneId");
+
+                    b.HasIndex("ContactId");
+
+                    b.HasIndex("PhoneTypeId");
+
+                    b.ToTable("PhoneNumbers");
+                });
+
             modelBuilder.Entity("ManageContacts.Entity.Entities.PhoneType", b =>
                 {
                     b.Property<Guid>("PhoneTypeId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ContactId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
@@ -342,16 +354,57 @@ namespace ManageContacts.Entity.Migrations
                     b.Property<Guid?>("ModifierId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("TypeName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("UnaccentedName")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
                     b.HasKey("PhoneTypeId");
 
-                    b.HasIndex("ContactId");
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("ModifierId");
 
                     b.ToTable("PhoneTypes");
+                });
+
+            modelBuilder.Entity("ManageContacts.Entity.Entities.Relative", b =>
+                {
+                    b.Property<Guid>("ContactRelativeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ContactId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FormattedType")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("RelativeTypeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Type")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("ContactRelativeId");
+
+                    b.HasIndex("ContactId");
+
+                    b.HasIndex("RelativeTypeId");
+
+                    b.ToTable("Relatives");
                 });
 
             modelBuilder.Entity("ManageContacts.Entity.Entities.RelativeType", b =>
@@ -360,11 +413,11 @@ namespace ManageContacts.Entity.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ContactId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
@@ -376,14 +429,24 @@ namespace ManageContacts.Entity.Migrations
                     b.Property<DateTime?>("ModifiedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Name")
+                    b.Property<Guid?>("ModifierId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TypeName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("UnaccentedName")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
                     b.HasKey("RelativeTypeId");
 
-                    b.HasIndex("ContactId");
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("ModifierId");
 
                     b.ToTable("RelativeTypes");
                 });
@@ -520,42 +583,7 @@ namespace ManageContacts.Entity.Migrations
                     b.ToTable("UserRoles");
                 });
 
-            modelBuilder.Entity("ManageContacts.Entity.Entities.AddressType", b =>
-                {
-                    b.HasOne("ManageContacts.Entity.Entities.Contact", "Contact")
-                        .WithMany()
-                        .HasForeignKey("ContactId");
-
-                    b.Navigation("Contact");
-                });
-
-            modelBuilder.Entity("ManageContacts.Entity.Entities.Company", b =>
-                {
-                    b.HasOne("ManageContacts.Entity.Entities.Contact", "Contact")
-                        .WithOne("Company")
-                        .HasForeignKey("ManageContacts.Entity.Entities.Company", "CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Contact");
-                });
-
-            modelBuilder.Entity("ManageContacts.Entity.Entities.Contact", b =>
-                {
-                    b.HasOne("ManageContacts.Entity.Entities.Group", "Group")
-                        .WithMany("Contacts")
-                        .HasForeignKey("GroupId");
-
-                    b.HasOne("ManageContacts.Entity.Entities.User", "User")
-                        .WithMany("Contacts")
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("Group");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("ManageContacts.Entity.Entities.ContactAddress", b =>
+            modelBuilder.Entity("ManageContacts.Entity.Entities.Address", b =>
                 {
                     b.HasOne("ManageContacts.Entity.Entities.AddressType", "AddressType")
                         .WithMany()
@@ -574,10 +602,55 @@ namespace ManageContacts.Entity.Migrations
                     b.Navigation("Contact");
                 });
 
-            modelBuilder.Entity("ManageContacts.Entity.Entities.ContactEmail", b =>
+            modelBuilder.Entity("ManageContacts.Entity.Entities.AddressType", b =>
+                {
+                    b.HasOne("ManageContacts.Entity.Entities.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId");
+
+                    b.HasOne("ManageContacts.Entity.Entities.User", "Modifier")
+                        .WithMany()
+                        .HasForeignKey("ModifierId");
+
+                    b.Navigation("Creator");
+
+                    b.Navigation("Modifier");
+                });
+
+            modelBuilder.Entity("ManageContacts.Entity.Entities.Company", b =>
                 {
                     b.HasOne("ManageContacts.Entity.Entities.Contact", "Contact")
-                        .WithMany("Emails")
+                        .WithOne("Company")
+                        .HasForeignKey("ManageContacts.Entity.Entities.Company", "CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Contact");
+                });
+
+            modelBuilder.Entity("ManageContacts.Entity.Entities.Contact", b =>
+                {
+                    b.HasOne("ManageContacts.Entity.Entities.Group", "Group")
+                        .WithMany("Contacts")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ManageContacts.Entity.Entities.User", "User")
+                        .WithMany("Contacts")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ManageContacts.Entity.Entities.EmailAddress", b =>
+                {
+                    b.HasOne("ManageContacts.Entity.Entities.Contact", "Contact")
+                        .WithMany("EmailAddresses")
                         .HasForeignKey("ContactId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -593,10 +666,34 @@ namespace ManageContacts.Entity.Migrations
                     b.Navigation("EmailType");
                 });
 
-            modelBuilder.Entity("ManageContacts.Entity.Entities.ContactPhone", b =>
+            modelBuilder.Entity("ManageContacts.Entity.Entities.EmailType", b =>
+                {
+                    b.HasOne("ManageContacts.Entity.Entities.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId");
+
+                    b.HasOne("ManageContacts.Entity.Entities.User", "Modifier")
+                        .WithMany()
+                        .HasForeignKey("ModifierId");
+
+                    b.Navigation("Creator");
+
+                    b.Navigation("Modifier");
+                });
+
+            modelBuilder.Entity("ManageContacts.Entity.Entities.Group", b =>
+                {
+                    b.HasOne("ManageContacts.Entity.Entities.User", "User")
+                        .WithMany("Groups")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ManageContacts.Entity.Entities.PhoneNumber", b =>
                 {
                     b.HasOne("ManageContacts.Entity.Entities.Contact", "Contact")
-                        .WithMany("Phones")
+                        .WithMany("PhoneNumbers")
                         .HasForeignKey("ContactId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -612,7 +709,22 @@ namespace ManageContacts.Entity.Migrations
                     b.Navigation("PhoneType");
                 });
 
-            modelBuilder.Entity("ManageContacts.Entity.Entities.ContactRelative", b =>
+            modelBuilder.Entity("ManageContacts.Entity.Entities.PhoneType", b =>
+                {
+                    b.HasOne("ManageContacts.Entity.Entities.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId");
+
+                    b.HasOne("ManageContacts.Entity.Entities.User", "Modifier")
+                        .WithMany()
+                        .HasForeignKey("ModifierId");
+
+                    b.Navigation("Creator");
+
+                    b.Navigation("Modifier");
+                });
+
+            modelBuilder.Entity("ManageContacts.Entity.Entities.Relative", b =>
                 {
                     b.HasOne("ManageContacts.Entity.Entities.Contact", "Contact")
                         .WithMany("Relatives")
@@ -631,40 +743,19 @@ namespace ManageContacts.Entity.Migrations
                     b.Navigation("RelativeType");
                 });
 
-            modelBuilder.Entity("ManageContacts.Entity.Entities.EmailType", b =>
-                {
-                    b.HasOne("ManageContacts.Entity.Entities.Contact", "Contact")
-                        .WithMany()
-                        .HasForeignKey("ContactId");
-
-                    b.Navigation("Contact");
-                });
-
-            modelBuilder.Entity("ManageContacts.Entity.Entities.Group", b =>
-                {
-                    b.HasOne("ManageContacts.Entity.Entities.User", "User")
-                        .WithMany("Groups")
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("ManageContacts.Entity.Entities.PhoneType", b =>
-                {
-                    b.HasOne("ManageContacts.Entity.Entities.Contact", "Contact")
-                        .WithMany()
-                        .HasForeignKey("ContactId");
-
-                    b.Navigation("Contact");
-                });
-
             modelBuilder.Entity("ManageContacts.Entity.Entities.RelativeType", b =>
                 {
-                    b.HasOne("ManageContacts.Entity.Entities.Contact", "Contact")
+                    b.HasOne("ManageContacts.Entity.Entities.User", "Creator")
                         .WithMany()
-                        .HasForeignKey("ContactId");
+                        .HasForeignKey("CreatorId");
 
-                    b.Navigation("Contact");
+                    b.HasOne("ManageContacts.Entity.Entities.User", "Modifier")
+                        .WithMany()
+                        .HasForeignKey("ModifierId");
+
+                    b.Navigation("Creator");
+
+                    b.Navigation("Modifier");
                 });
 
             modelBuilder.Entity("ManageContacts.Entity.Entities.Role", b =>
@@ -729,9 +820,9 @@ namespace ManageContacts.Entity.Migrations
                     b.Navigation("Company")
                         .IsRequired();
 
-                    b.Navigation("Emails");
+                    b.Navigation("EmailAddresses");
 
-                    b.Navigation("Phones");
+                    b.Navigation("PhoneNumbers");
 
                     b.Navigation("Relatives");
                 });

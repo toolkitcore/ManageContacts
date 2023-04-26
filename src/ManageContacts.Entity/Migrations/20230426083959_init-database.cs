@@ -44,6 +44,64 @@ namespace ManageContacts.Entity.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AddressTypes",
+                columns: table => new
+                {
+                    AddressTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TypeName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    UnaccentedName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModifierId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AddressTypes", x => x.AddressTypeId);
+                    table.ForeignKey(
+                        name: "FK_AddressTypes_Users_CreatorId",
+                        column: x => x.CreatorId,
+                        principalTable: "Users",
+                        principalColumn: "UserId");
+                    table.ForeignKey(
+                        name: "FK_AddressTypes_Users_ModifierId",
+                        column: x => x.ModifierId,
+                        principalTable: "Users",
+                        principalColumn: "UserId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EmailTypes",
+                columns: table => new
+                {
+                    EmailTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TypeName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    UnaccentedName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModifierId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmailTypes", x => x.EmailTypeId);
+                    table.ForeignKey(
+                        name: "FK_EmailTypes_Users_CreatorId",
+                        column: x => x.CreatorId,
+                        principalTable: "Users",
+                        principalColumn: "UserId");
+                    table.ForeignKey(
+                        name: "FK_EmailTypes_Users_ModifierId",
+                        column: x => x.ModifierId,
+                        principalTable: "Users",
+                        principalColumn: "UserId");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Groups",
                 columns: table => new
                 {
@@ -66,6 +124,64 @@ namespace ManageContacts.Entity.Migrations
                         principalColumn: "UserId");
                     table.ForeignKey(
                         name: "FK_Groups_Users_ModifierId",
+                        column: x => x.ModifierId,
+                        principalTable: "Users",
+                        principalColumn: "UserId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PhoneTypes",
+                columns: table => new
+                {
+                    PhoneTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TypeName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    UnaccentedName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModifierId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PhoneTypes", x => x.PhoneTypeId);
+                    table.ForeignKey(
+                        name: "FK_PhoneTypes_Users_CreatorId",
+                        column: x => x.CreatorId,
+                        principalTable: "Users",
+                        principalColumn: "UserId");
+                    table.ForeignKey(
+                        name: "FK_PhoneTypes_Users_ModifierId",
+                        column: x => x.ModifierId,
+                        principalTable: "Users",
+                        principalColumn: "UserId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RelativeTypes",
+                columns: table => new
+                {
+                    RelativeTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TypeName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    UnaccentedName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ModifierId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RelativeTypes", x => x.RelativeTypeId);
+                    table.ForeignKey(
+                        name: "FK_RelativeTypes_Users_CreatorId",
+                        column: x => x.CreatorId,
+                        principalTable: "Users",
+                        principalColumn: "UserId");
+                    table.ForeignKey(
+                        name: "FK_RelativeTypes_Users_ModifierId",
                         column: x => x.ModifierId,
                         principalTable: "Users",
                         principalColumn: "UserId");
@@ -114,8 +230,7 @@ namespace ManageContacts.Entity.Migrations
                     CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ModifierId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    ModifierId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -133,11 +248,6 @@ namespace ManageContacts.Entity.Migrations
                     table.ForeignKey(
                         name: "FK_Contacts_Users_ModifierId",
                         column: x => x.ModifierId,
-                        principalTable: "Users",
-                        principalColumn: "UserId");
-                    table.ForeignKey(
-                        name: "FK_Contacts_Users_UserId",
-                        column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "UserId");
                 });
@@ -174,37 +284,34 @@ namespace ManageContacts.Entity.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AddressTypes",
+                name: "Addresses",
                 columns: table => new
                 {
+                    ContactAddressId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Province = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Ward = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    District = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Addresss = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    FormattedType = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     AddressTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
-                    ContactId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Deleted = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ModifierId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    ContactId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AddressTypes", x => x.AddressTypeId);
+                    table.PrimaryKey("PK_Addresses", x => x.ContactAddressId);
                     table.ForeignKey(
-                        name: "FK_AddressTypes_Contacts_ContactId",
+                        name: "FK_Addresses_AddressTypes_AddressTypeId",
+                        column: x => x.AddressTypeId,
+                        principalTable: "AddressTypes",
+                        principalColumn: "AddressTypeId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Addresses_Contacts_ContactId",
                         column: x => x.ContactId,
                         principalTable: "Contacts",
-                        principalColumn: "ContactId");
-                    table.ForeignKey(
-                        name: "FK_AddressTypes_Users_CreatorId",
-                        column: x => x.CreatorId,
-                        principalTable: "Users",
-                        principalColumn: "UserId");
-                    table.ForeignKey(
-                        name: "FK_AddressTypes_Users_ModifierId",
-                        column: x => x.ModifierId,
-                        principalTable: "Users",
-                        principalColumn: "UserId");
+                        principalColumn: "ContactId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -228,156 +335,27 @@ namespace ManageContacts.Entity.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "EmailTypes",
-                columns: table => new
-                {
-                    EmailTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
-                    ContactId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Deleted = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ModifierId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EmailTypes", x => x.EmailTypeId);
-                    table.ForeignKey(
-                        name: "FK_EmailTypes_Contacts_ContactId",
-                        column: x => x.ContactId,
-                        principalTable: "Contacts",
-                        principalColumn: "ContactId");
-                    table.ForeignKey(
-                        name: "FK_EmailTypes_Users_CreatorId",
-                        column: x => x.CreatorId,
-                        principalTable: "Users",
-                        principalColumn: "UserId");
-                    table.ForeignKey(
-                        name: "FK_EmailTypes_Users_ModifierId",
-                        column: x => x.ModifierId,
-                        principalTable: "Users",
-                        principalColumn: "UserId");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PhoneTypes",
-                columns: table => new
-                {
-                    PhoneTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
-                    ContactId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Deleted = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ModifierId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PhoneTypes", x => x.PhoneTypeId);
-                    table.ForeignKey(
-                        name: "FK_PhoneTypes_Contacts_ContactId",
-                        column: x => x.ContactId,
-                        principalTable: "Contacts",
-                        principalColumn: "ContactId");
-                    table.ForeignKey(
-                        name: "FK_PhoneTypes_Users_CreatorId",
-                        column: x => x.CreatorId,
-                        principalTable: "Users",
-                        principalColumn: "UserId");
-                    table.ForeignKey(
-                        name: "FK_PhoneTypes_Users_ModifierId",
-                        column: x => x.ModifierId,
-                        principalTable: "Users",
-                        principalColumn: "UserId");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "RelativeTypes",
-                columns: table => new
-                {
-                    RelativeTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
-                    ContactId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Deleted = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ModifierId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RelativeTypes", x => x.RelativeTypeId);
-                    table.ForeignKey(
-                        name: "FK_RelativeTypes_Contacts_ContactId",
-                        column: x => x.ContactId,
-                        principalTable: "Contacts",
-                        principalColumn: "ContactId");
-                    table.ForeignKey(
-                        name: "FK_RelativeTypes_Users_CreatorId",
-                        column: x => x.CreatorId,
-                        principalTable: "Users",
-                        principalColumn: "UserId");
-                    table.ForeignKey(
-                        name: "FK_RelativeTypes_Users_ModifierId",
-                        column: x => x.ModifierId,
-                        principalTable: "Users",
-                        principalColumn: "UserId");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ContactAddresses",
-                columns: table => new
-                {
-                    ContactAddressId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Province = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Ward = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    District = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
-                    AddressTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ContactId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ContactAddresses", x => x.ContactAddressId);
-                    table.ForeignKey(
-                        name: "FK_ContactAddresses_AddressTypes_AddressTypeId",
-                        column: x => x.AddressTypeId,
-                        principalTable: "AddressTypes",
-                        principalColumn: "AddressTypeId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ContactAddresses_Contacts_ContactId",
-                        column: x => x.ContactId,
-                        principalTable: "Contacts",
-                        principalColumn: "ContactId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ContactEmails",
+                name: "EmailAddresses",
                 columns: table => new
                 {
                     ContactEmailId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    FormattedType = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     EmailTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ContactId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ContactEmails", x => x.ContactEmailId);
+                    table.PrimaryKey("PK_EmailAddresses", x => x.ContactEmailId);
                     table.ForeignKey(
-                        name: "FK_ContactEmails_Contacts_ContactId",
+                        name: "FK_EmailAddresses_Contacts_ContactId",
                         column: x => x.ContactId,
                         principalTable: "Contacts",
                         principalColumn: "ContactId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ContactEmails_EmailTypes_EmailTypeId",
+                        name: "FK_EmailAddresses_EmailTypes_EmailTypeId",
                         column: x => x.EmailTypeId,
                         principalTable: "EmailTypes",
                         principalColumn: "EmailTypeId",
@@ -385,25 +363,27 @@ namespace ManageContacts.Entity.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ContactPhones",
+                name: "PhoneNumbers",
                 columns: table => new
                 {
                     ContactPhoneId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    FormattedType = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     PhoneTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ContactId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ContactPhones", x => x.ContactPhoneId);
+                    table.PrimaryKey("PK_PhoneNumbers", x => x.ContactPhoneId);
                     table.ForeignKey(
-                        name: "FK_ContactPhones_Contacts_ContactId",
+                        name: "FK_PhoneNumbers_Contacts_ContactId",
                         column: x => x.ContactId,
                         principalTable: "Contacts",
                         principalColumn: "ContactId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ContactPhones_PhoneTypes_PhoneTypeId",
+                        name: "FK_PhoneNumbers_PhoneTypes_PhoneTypeId",
                         column: x => x.PhoneTypeId,
                         principalTable: "PhoneTypes",
                         principalColumn: "PhoneTypeId",
@@ -411,25 +391,27 @@ namespace ManageContacts.Entity.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ContactRelatives",
+                name: "Relatives",
                 columns: table => new
                 {
                     ContactRelativeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    FormattedType = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     RelativeTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ContactId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ContactRelatives", x => x.ContactRelativeId);
+                    table.PrimaryKey("PK_Relatives", x => x.ContactRelativeId);
                     table.ForeignKey(
-                        name: "FK_ContactRelatives_Contacts_ContactId",
+                        name: "FK_Relatives_Contacts_ContactId",
                         column: x => x.ContactId,
                         principalTable: "Contacts",
                         principalColumn: "ContactId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ContactRelatives_RelativeTypes_RelativeTypeId",
+                        name: "FK_Relatives_RelativeTypes_RelativeTypeId",
                         column: x => x.RelativeTypeId,
                         principalTable: "RelativeTypes",
                         principalColumn: "RelativeTypeId",
@@ -437,8 +419,13 @@ namespace ManageContacts.Entity.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_AddressTypes_ContactId",
-                table: "AddressTypes",
+                name: "IX_Addresses_AddressTypeId",
+                table: "Addresses",
+                column: "AddressTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Addresses_ContactId",
+                table: "Addresses",
                 column: "ContactId");
 
             migrationBuilder.CreateIndex(
@@ -450,46 +437,6 @@ namespace ManageContacts.Entity.Migrations
                 name: "IX_AddressTypes_ModifierId",
                 table: "AddressTypes",
                 column: "ModifierId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ContactAddresses_AddressTypeId",
-                table: "ContactAddresses",
-                column: "AddressTypeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ContactAddresses_ContactId",
-                table: "ContactAddresses",
-                column: "ContactId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ContactEmails_ContactId",
-                table: "ContactEmails",
-                column: "ContactId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ContactEmails_EmailTypeId",
-                table: "ContactEmails",
-                column: "EmailTypeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ContactPhones_ContactId",
-                table: "ContactPhones",
-                column: "ContactId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ContactPhones_PhoneTypeId",
-                table: "ContactPhones",
-                column: "PhoneTypeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ContactRelatives_ContactId",
-                table: "ContactRelatives",
-                column: "ContactId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ContactRelatives_RelativeTypeId",
-                table: "ContactRelatives",
-                column: "RelativeTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Contacts_CreatorId",
@@ -507,14 +454,14 @@ namespace ManageContacts.Entity.Migrations
                 column: "ModifierId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Contacts_UserId",
-                table: "Contacts",
-                column: "UserId");
+                name: "IX_EmailAddresses_ContactId",
+                table: "EmailAddresses",
+                column: "ContactId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EmailTypes_ContactId",
-                table: "EmailTypes",
-                column: "ContactId");
+                name: "IX_EmailAddresses_EmailTypeId",
+                table: "EmailAddresses",
+                column: "EmailTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EmailTypes_CreatorId",
@@ -537,9 +484,14 @@ namespace ManageContacts.Entity.Migrations
                 column: "ModifierId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PhoneTypes_ContactId",
-                table: "PhoneTypes",
+                name: "IX_PhoneNumbers_ContactId",
+                table: "PhoneNumbers",
                 column: "ContactId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PhoneNumbers_PhoneTypeId",
+                table: "PhoneNumbers",
+                column: "PhoneTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PhoneTypes_CreatorId",
@@ -552,9 +504,14 @@ namespace ManageContacts.Entity.Migrations
                 column: "ModifierId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RelativeTypes_ContactId",
-                table: "RelativeTypes",
+                name: "IX_Relatives_ContactId",
+                table: "Relatives",
                 column: "ContactId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Relatives_RelativeTypeId",
+                table: "Relatives",
+                column: "RelativeTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RelativeTypes_CreatorId",
@@ -600,19 +557,19 @@ namespace ManageContacts.Entity.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Addresses");
+
+            migrationBuilder.DropTable(
                 name: "Companies");
 
             migrationBuilder.DropTable(
-                name: "ContactAddresses");
+                name: "EmailAddresses");
 
             migrationBuilder.DropTable(
-                name: "ContactEmails");
+                name: "PhoneNumbers");
 
             migrationBuilder.DropTable(
-                name: "ContactPhones");
-
-            migrationBuilder.DropTable(
-                name: "ContactRelatives");
+                name: "Relatives");
 
             migrationBuilder.DropTable(
                 name: "UserRoles");
@@ -627,13 +584,13 @@ namespace ManageContacts.Entity.Migrations
                 name: "PhoneTypes");
 
             migrationBuilder.DropTable(
+                name: "Contacts");
+
+            migrationBuilder.DropTable(
                 name: "RelativeTypes");
 
             migrationBuilder.DropTable(
                 name: "Roles");
-
-            migrationBuilder.DropTable(
-                name: "Contacts");
 
             migrationBuilder.DropTable(
                 name: "Groups");

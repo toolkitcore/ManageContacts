@@ -11,7 +11,7 @@ public class EmailAddressConfiguration : IEntityTypeConfiguration<EmailAddress>
         builder.HasOne(ce => ce.EmailType)
             .WithMany()
             .HasForeignKey(ce => ce.EmailTypeId)
-            .IsRequired();
+            .IsRequired(false);
         
         
     }

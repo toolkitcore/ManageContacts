@@ -11,6 +11,6 @@ public class AddressConfiguration : IEntityTypeConfiguration<Address>
         builder.HasOne(ca => ca.AddressType)
             .WithMany()
             .HasForeignKey(ca => ca.AddressTypeId)
-            .IsRequired();
+            .IsRequired(false);
     }
 }

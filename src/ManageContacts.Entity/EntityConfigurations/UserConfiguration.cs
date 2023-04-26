@@ -31,6 +31,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .WithMany()
             .HasForeignKey(u => u.ModifierId)
             .IsRequired(false);
+        
 
     }
 }

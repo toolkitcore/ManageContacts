@@ -11,6 +11,6 @@ public class PhoneNumberConfiguration : IEntityTypeConfiguration<PhoneNumber>
         builder.HasOne(pt => pt.PhoneType)
             .WithMany()
             .HasForeignKey(pt => pt.PhoneTypeId)
-            .IsRequired();
+            .IsRequired(false);
     }
 }

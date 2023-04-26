@@ -12,7 +12,6 @@ public class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
 
         builder.Property(u => u.CreatedTime)
             .HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
-
         
         builder.HasOne(ur => ur.User)
             .WithMany(u => u.UserRoles)
