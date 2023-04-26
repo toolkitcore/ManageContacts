@@ -1,6 +1,9 @@
+using ManageContacts.Shared.Serilog;
+using Serilog;
+
 var builder = WebApplication.CreateBuilder(args);
-var app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
+builder.Host.UseSerilog(SeriLogger.Configure);
 
-app.Run();
+Log.Information("Start server Web API Manage Contacts ");
+

@@ -10,4 +10,10 @@
       <Folder Include="wwwroot\uploads" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\ManageContacts.Model\ManageContacts.Model.csproj" />
+      <ProjectReference Include="..\ManageContacts.Service\ManageContacts.Service.csproj" />
+      <ProjectReference Include="..\ManageContacts.Shared\ManageContacts.Shared.csproj" />
+    </ItemGroup>
+
 </Project>
