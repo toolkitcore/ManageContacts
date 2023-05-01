@@ -1,6 +1,6 @@
-using System.Net;
+﻿using System.Net;
 
-namespace ManageContacts.Model.Abstractions;
+namespace ManageContacts.Model.Abstractions.Responses;
 
 public class BadRequestResponseModel : BaseResponseModel
 {

@@ -15,12 +15,13 @@ public static class HttpContextExtensions
         return contextAccessor.HttpContext.User.GetCurrentUserId();
     }
     
+    
     public static Guid GetCurrentUserId(this ClaimsPrincipal claimsPrincipal)
     {
         if (claimsPrincipal == null || !claimsPrincipal.Claims.NotNullOrEmpty())
             throw new ArgumentNullException(nameof(claimsPrincipal));
 
-        var claim = claimsPrincipal.Claims.FirstOrDefault(c => c.Type == "uid");
+        var claim = claimsPrincipal.Claims.FirstOrDefault(c => c.Type == "UserId");
         if (claim == null)
             throw new ArgumentNullException(nameof(claim));
 

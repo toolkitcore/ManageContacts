@@ -1,7 +1,7 @@
-using System.Net;
+﻿using System.Net;
 using Newtonsoft.Json;
 
-namespace ManageContacts.Model.Abstractions;
+namespace ManageContacts.Model.Abstractions.Responses;
 
 public class AuthorizedResponseModel : BaseResponseModel
 {

@@ -1,5 +1,5 @@
-﻿using ManageContacts.Model.Abstractions;
-using ManageContacts.Model.Users;
+﻿using ManageContacts.Model.Abstractions.Responses;
+using ManageContacts.Model.Models.Users;
 
 namespace ManageContacts.Service.AuthServices.AccessToken;
 

@@ -1,4 +1,4 @@
-namespace ManageContacts.Model.Users;
+﻿namespace ManageContacts.Model.Models.Users;
 
 public class UserProfileModel
 {

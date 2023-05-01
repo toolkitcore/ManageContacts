@@ -1,6 +1,6 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
-namespace ManageContacts.Model.Users;
+namespace ManageContacts.Model.Models.Users;
 
 public class ChangePasswordModel
 {

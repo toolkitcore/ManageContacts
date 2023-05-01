@@ -1,5 +1,5 @@
 using System.Net;
-using ManageContacts.Model.Abstractions;
+using ManageContacts.Model.Abstractions.Responses;
 using ManageContacts.Shared.Exceptions;
 using Newtonsoft.Json;
 

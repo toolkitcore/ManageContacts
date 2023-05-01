@@ -6,9 +6,4 @@ public static class UseMiddlewares
     {
         app.UseMiddleware<HandleExceptionMiddleware>();
     }
-        
-    public static void UseJwtTokenMiddleware(this WebApplication app)
-    {
-        app.UseMiddleware<HandleJwtTokenMiddleware>();
-    }
 }

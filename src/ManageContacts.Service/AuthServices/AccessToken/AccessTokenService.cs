@@ -1,8 +1,8 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using ManageContacts.Model.Abstractions;
-using ManageContacts.Model.Users;
+using ManageContacts.Model.Abstractions.Responses;
+using ManageContacts.Model.Models.Users;
 using ManageContacts.Shared.Configurations;
 using ManageContacts.Shared.Extensions;
 using Microsoft.Extensions.Configuration;
@@ -24,7 +24,7 @@ public class AccessTokenService : IAccessTokenService
         var expiredTime = issuedTime.AddMinutes(jwtSetting.ExpiredMinute);
         var claims = new ClaimsIdentity(new[]
         {
-            new Claim("UserId", auth.Id),
+            new Claim("UserId", auth.UserId),
             new Claim("UserName", auth.UserName),
             new Claim("Email", auth.Email)
         });
@@ -71,7 +71,7 @@ public class AccessTokenService : IAccessTokenService
 
         return new UserContextModel()
         {
-            Id = userId,
+            UserId = userId,
             UserName = userName,
             Email = email
         };
