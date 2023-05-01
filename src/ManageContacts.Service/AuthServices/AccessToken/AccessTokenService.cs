@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using ManageContacts.Entity.Entities;
 using ManageContacts.Model.Abstractions.Responses;
 using ManageContacts.Model.Models.Users;
 using ManageContacts.Shared.Configurations;
@@ -10,23 +11,18 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace ManageContacts.Service.AuthServices.AccessToken;
 
-public class AccessTokenService : IAccessTokenService
+public static class AccessTokenService 
 {
-    private readonly JwtSetting jwtSetting;
-    public AccessTokenService(IConfiguration configuration)
-    {
-        jwtSetting = configuration.GetOptions<JwtSetting>() ?? throw new ArgumentNullException(nameof(configuration));
-    }
-    public AuthorizedResponseModel GenerateJwtToken(UserContextModel auth)
+    public static AuthorizedResponseModel GenerateJwtToken(User user, JwtSetting jwtSetting)
     {
         var refreshToken = Guid.NewGuid().ToString();
         var issuedTime = DateTime.UtcNow;
         var expiredTime = issuedTime.AddMinutes(jwtSetting.ExpiredMinute);
         var claims = new ClaimsIdentity(new[]
         {
-            new Claim("UserId", auth.UserId),
-            new Claim("UserName", auth.UserName),
-            new Claim("Email", auth.Email)
+            new Claim("UserId", user.UserId.ToString()),
+            new Claim("UserName", user.UserName),
+            new Claim("Email", user.Email)
         });
         
         var jwtTokenHandler = new JwtSecurityTokenHandler();
@@ -43,38 +39,6 @@ public class AccessTokenService : IAccessTokenService
         var accessToken = jwtTokenHandler.WriteToken(jwtTokenHandler.CreateToken(tokenDescriptor));
 
         return new AuthorizedResponseModel(accessToken, refreshToken, issuedTime, expiredTime);
-        
     }
-
-    public UserContextModel ParseJwtToken(string token)
-    {
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(jwtSetting.Key);
-        tokenHandler.ValidateToken(token, new TokenValidationParameters()
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSetting.Key)),
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero,
-            ValidIssuer = jwtSetting.Issuer,
-            ValidAudience = jwtSetting.Audience
-            
-        }, out SecurityToken validatedToken);
-        
-        var jwtToken = (JwtSecurityToken)validatedToken;
-
-        var userId = jwtToken.Claims.FirstOrDefault(x => x.Type == "UserId")?.Value;
-        var userName = jwtToken.Claims.FirstOrDefault(x => x.Type == "UserName")?.Value;
-        var email = jwtToken.Claims.FirstOrDefault(x => x.Type == "Email")?.Value;
-
-        return new UserContextModel()
-        {
-            UserId = userId,
-            UserName = userName,
-            Email = email
-        };
-        
-    }
+    
 }
