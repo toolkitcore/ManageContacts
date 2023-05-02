@@ -11,6 +11,10 @@ public interface IUserService
 
     Task<OkResponseModel<UserModel>> GetAsync(Guid userId, CancellationToken cancellationToken = default);
     
+    Task<BaseResponseModel> CreateAsync(UserEditModel userEdit, CancellationToken cancellationToken = default);
+    
+    Task<BaseResponseModel> UpdateAsync(Guid userId, UserEditModel userEdit,CancellationToken cancellationToken = default);
+    
     Task<BaseResponseModel> DeleteAsync(Guid userId, CancellationToken cancellationToken = default);
 
     Task<BaseResponseModel> UndeleteUserAsync(Guid userId, CancellationToken cancellationToken = default);

@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Text.Encodings.Web;
+using AutoMapper;
 using ManageContacts.Entity.Abstractions.Paginations;
 using ManageContacts.Entity.Entities;
 using ManageContacts.Infrastructure.Abstractions;
@@ -9,6 +10,7 @@ using ManageContacts.Shared.Configurations;
 using ManageContacts.Shared.Exceptions;
 using ManageContacts.Shared.Extensions;
 using ManageContacts.Shared.Helper;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 
@@ -20,18 +22,23 @@ public class UserService : IUserService
     private readonly IMapper _mapper;
     private readonly JwtSetting _jwtSetting;
     private readonly Guid _currentUserId;
+    private readonly IWebHostEnvironment _env;
     
-    public UserService(IRepository<User> userRepository, IMapper mapper, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+    public UserService(IRepository<User> userRepository, IMapper mapper, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IWebHostEnvironment env)
     {
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _jwtSetting = configuration.GetOptions<JwtSetting>() ?? throw new ArgumentNullException(nameof(configuration));
+        _env = env ?? throw new ArgumentNullException(nameof(env));
         _currentUserId = httpContextAccessor.GetCurrentUserId();
     }
     
     #region [ADMIN]
     public async Task<OkResponseModel<IPagedList<UserModel>>> GetAllAsync(UserFilterRequestModel filter, CancellationToken cancellationToken = default)
     {
+        if (_currentUserId == Guid.Empty)
+            throw new BadRequestException("The request is invalid.");
+        
         var us = await _userRepository.PagingAllAsync(
                 predicate: u => (!string.IsNullOrEmpty(filter.SearchString) 
                                 || u.FirstName.Contains(filter.SearchString)
@@ -60,7 +67,41 @@ public class UserService : IUserService
 
         return new OkResponseModel<UserModel>(_mapper.Map<UserModel>(user));
     }
-    
+
+    public async Task<BaseResponseModel> CreateAsync(UserEditModel userEdit, CancellationToken cancellationToken = default)
+    {
+        if (_currentUserId == Guid.Empty)
+            throw new BadRequestException("The request is invalid.");
+        
+        var existUser = await _userRepository.GetAsync(
+            predicate: u => u.Email == userEdit.Email && u.PhoneNumber == userEdit.PhoneNumber && u.Deleted,
+            cancellationToken: cancellationToken
+        ).ConfigureAwait(false);
+        
+        if (existUser != null)
+            throw new BadRequestException("User with the same email or phone already exists.");
+        
+        string targetPath = string.Empty;
+        if (!string.IsNullOrEmpty(userEdit.Avatar))
+            targetPath = Path.Combine(_env.WebRootPath, "images", "users", Path.GetFileName(userEdit.Avatar));
+        
+        var newUser = _mapper.Map<User>(userEdit);
+        newUser.CreatorId = _currentUserId;
+
+        await _userRepository.InsertAsync(newUser, cancellationToken).ConfigureAwait(false);
+        await _userRepository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        
+        if(!string.IsNullOrEmpty(targetPath))
+            await FileExtensions.MoveFile(userEdit.Avatar, targetPath).ConfigureAwait(false);
+        
+        return new BaseResponseModel("Create user successfully");
+    }
+
+    public async Task<BaseResponseModel> UpdateAsync(Guid userId, UserEditModel userEdit, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
 
     public async Task<BaseResponseModel> DeleteAsync(Guid userId, CancellationToken cancellationToken = default)
     {
@@ -140,7 +181,7 @@ public class UserService : IUserService
         await _userRepository.InsertAsync(newUser, cancellationToken);
         await _userRepository.SaveChangesAsync(cancellationToken);
 
-        return new BaseResponseModel("Register ");
+        return new BaseResponseModel("Successful account registration.");
     }
 
     public async Task<AuthorizedResponseModel> SignInAsync(UserLoginModel loginUser, CancellationToken cancellationToken = default)
