@@ -115,10 +115,6 @@ public class RoleService : IRoleService
             cancellationToken: cancellationToken
         ).ConfigureAwait(false);
         
-        foreach (var ur in urs)
-        {
-            ur.Deleted = true;
-        }
         _roleRepository.Delete(role);
         await _userRoleRepository.UpdateAsync(urs.ToList(), cancellationToken).ConfigureAwait(false);
         await _roleRepository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);

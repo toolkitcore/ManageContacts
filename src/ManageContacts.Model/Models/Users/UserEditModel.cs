@@ -16,4 +16,6 @@ public class UserEditModel
     
     public string? Avatar { get; set; }
     
+    public List<Guid>? ListRoleId { get; set; }
+
 }

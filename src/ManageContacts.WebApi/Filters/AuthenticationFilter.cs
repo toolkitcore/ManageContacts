@@ -48,7 +48,6 @@ public class AuthorizedAttribute : Attribute, IAsyncAuthorizationFilter
             context.Result = new JsonResult(new BaseResponseModel(HttpStatusCode.Unauthorized, "Unauthorized"));
             return;
         }
-            
         
         var userRoles = await roleCacheService.GetUserRolesAsync(currentUserId);
         

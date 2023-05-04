@@ -1,4 +1,5 @@
-﻿using ManageContacts.Model.Models.Users;
+﻿using ManageContacts.Entity.Entities;
+using ManageContacts.Model.Models.Users;
 using ManageContacts.Service.Services.Users;
 using ManageContacts.Shared.Consts;
 using ManageContacts.WebApi.Filters;
@@ -28,6 +29,34 @@ public class UserController : BaseController
     [Authorized(Roles.Administrator, Roles.Manager)]
     public async Task<IActionResult> GetAsync([FromRoute]Guid userId, CancellationToken cancellationToken = default) 
         => Ok(await _userService.GetAsync(userId, cancellationToken).ConfigureAwait(false));
+
+    [HttpPost]
+    [Route("api/users")]
+    [Authorized(Roles.Administrator, Roles.Manager)]
+    public async Task<IActionResult> CreateAsync([FromBody] UserEditModel userEdit,
+        CancellationToken cancellationToken = default)
+        => Ok(await _userService.CreateAsync(userEdit, cancellationToken).ConfigureAwait(false));
+
+    [HttpPut]
+    [Route("api/users/{id:guid}")]
+    [Authorized(Roles.Administrator, Roles.Manager)]
+    public async Task<IActionResult> UpdateAsync([FromRoute(Name = "id")] Guid userId,
+        [FromBody] UserEditModel userEdit, CancellationToken cancellationToken = default)
+        => Ok(await _userService.UpdateAsync(userId, userEdit, cancellationToken).ConfigureAwait(false));
+
+    [HttpDelete]
+    [Route("api/users/{id:guid}")]
+    [Authorized(Roles.Administrator, Roles.Manager)]
+    public async Task<IActionResult> DeleteAsync([FromRoute(Name = "id")] Guid userId,
+        CancellationToken cancellationToken = default)
+        => Ok(await _userService.DeleteAsync(userId, cancellationToken).ConfigureAwait(false));
+
+    [HttpPut]
+    [Route("api/users/{id:guid}/recover")]
+    [Authorized(Roles.Administrator, Roles.Manager)]
+    public async Task<IActionResult> RecoverAsync([FromRoute(Name = "id")] Guid userId,
+        CancellationToken cancellationToken = default)
+        => Ok(await _userService.RecoverAsync(userId, cancellationToken).ConfigureAwait(false));
     #endregion
     
     #region [USER API]
