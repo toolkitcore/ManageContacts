@@ -1,5 +1,6 @@
 using EFCore.BulkExtensions;
 using ManageContacts.Entity.Abstractions.Audits.Interfaces;
+using ManageContacts.Shared.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace ManageContacts.Entity.Contexts;
@@ -47,7 +48,7 @@ public class ApplicationDbContext : DbContext
                 deletionAuditEntity.Deleted = false;
             }
         }
-        await DbContextBulkExtensions.BulkInsertAsync<TEntity>(this, listEntities, cancellationToken: cancellationToken);
+        await DbContextBulkExtensions.BulkInsertAsync<TEntity>(this, listEntities, cancellationToken: cancellationToken).ConfigureAwait(false);
     }
     
     public void BulkUpdate<TEntity>(IList<TEntity> listEntities) where TEntity : class
@@ -71,36 +72,44 @@ public class ApplicationDbContext : DbContext
                 modificationAuditEntity.ModifiedTime = DateTime.UtcNow;
             }
         }
-        await DbContextBulkExtensions.BulkUpdateAsync<TEntity>(this, listEntities, cancellationToken: cancellationToken);
+        await DbContextBulkExtensions.BulkUpdateAsync<TEntity>(this, listEntities, cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 
 
     public void BulkDelete<TEntity>(IList<TEntity> listEntities) where TEntity : class
     {
-        foreach (var entity in listEntities)
+        if (listEntities.NotNullOrEmpty() && listEntities.FirstOrDefault() is IDeletionAuditEntity)
         {
-            if (entity is IDeletionAuditEntity deletionAuditEntity)
+            foreach (var entity in listEntities)
             {
-                deletionAuditEntity.Deleted = true;
-                deletionAuditEntity.DeletedTime = DateTime.UtcNow;
+                if (entity is IDeletionAuditEntity deletionAuditEntity)
+                {
+                    deletionAuditEntity.Deleted = true;
+                    deletionAuditEntity.DeletedTime = DateTime.UtcNow;
+                }
             }
+            
+            DbContextBulkExtensions.BulkUpdate<TEntity>(this, listEntities);
         }
-        
-        DbContextBulkExtensions.BulkDelete<TEntity>(this, listEntities);
+        else DbContextBulkExtensions.BulkDelete<TEntity>(this, listEntities);
     }
     
     public async Task BulkDeleteAsync<TEntity>(IList<TEntity> listEntities, CancellationToken cancellationToken = default) where TEntity : class
     {
-        foreach (var entity in listEntities)
+        if (listEntities.NotNullOrEmpty() && listEntities.FirstOrDefault() is IDeletionAuditEntity)
         {
-            if (entity is IDeletionAuditEntity deletionAuditEntity)
+            foreach (var entity in listEntities)
             {
-                deletionAuditEntity.Deleted = true;
-                deletionAuditEntity.DeletedTime = DateTime.UtcNow;
+                if (entity is IDeletionAuditEntity deletionAuditEntity)
+                {
+                    deletionAuditEntity.Deleted = true;
+                    deletionAuditEntity.DeletedTime = DateTime.UtcNow;
+                }
             }
+            
+            await DbContextBulkExtensions.BulkUpdateAsync<TEntity>(this, listEntities, cancellationToken: cancellationToken).ConfigureAwait(false);
         }
-        
-        await DbContextBulkExtensions.BulkDeleteAsync<TEntity>(this, listEntities, cancellationToken : cancellationToken);
+        else await DbContextBulkExtensions.BulkDeleteAsync<TEntity>(this, listEntities, cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 
     #region [Private methods]

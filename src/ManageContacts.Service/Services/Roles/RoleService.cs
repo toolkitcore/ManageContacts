@@ -29,8 +29,7 @@ public class RoleService : IRoleService
         var roles = await _roleRepository.PagingAllAsync(
             predicate: u => (string.IsNullOrEmpty(filter.SearchString) 
                             || u.Name.Contains(filter.SearchString)
-                            || string.IsNullOrEmpty(u.Description)
-                            || u.Description.Contains(filter.SearchString))
+                            || (!string.IsNullOrEmpty(u.Description) && (u.Description.Contains(filter.SearchString))))
                             && u.Deleted == filter.Deleted,
             orderBy: u => u.OrderByDescending(x => x.CreatedTime),
             pageIndex: filter.PageIndex,

@@ -1,6 +1,4 @@
-﻿using ManageContacts.Model.Abstractions;
-using ManageContacts.Model.Abstractions.Responses;
-using ManageContacts.Model.Models.Roles;
+﻿using ManageContacts.Model.Models.Roles;
 using ManageContacts.Service.Services.Roles;
 using ManageContacts.Shared.Consts;
 using ManageContacts.WebApi.Filters;
@@ -13,7 +11,7 @@ public class RoleController : BaseController
     private readonly IRoleService _roleService;
     public RoleController(ILogger<RoleController> logger, IRoleService roleService) : base(logger)
     {
-        _roleService = roleService;
+        _roleService = roleService ?? throw new ArgumentNullException(nameof(RoleService));;
     }
 
     #region [ADMIN PRIVATE API]

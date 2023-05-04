@@ -10,7 +10,6 @@
 ## Technologies Used
 
 - SQL
-- OAuth2
 - Entity Framework Core
 - Linq
 - FluentValidator

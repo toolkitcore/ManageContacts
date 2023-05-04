@@ -1,5 +1,4 @@
-﻿using ManageContacts.Model.Abstractions.Responses;
-using ManageContacts.Model.Models.Users;
+﻿using ManageContacts.Model.Models.Users;
 using ManageContacts.Service.Services.Users;
 using ManageContacts.Shared.Consts;
 using ManageContacts.WebApi.Filters;
@@ -14,7 +13,7 @@ public class UserController : BaseController
     private readonly IUserService _userService;
     public UserController(ILogger<UserController> logger, IUserService userService) : base(logger)
     {
-        _userService = userService;
+        _userService = userService ?? throw new ArgumentNullException(nameof(UserService));
     }
     
     #region [ADMIN PRIVATE API]

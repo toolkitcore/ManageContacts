@@ -23,4 +23,17 @@ public static class ValidationRuleExtensions
                 context.AddFailure("The password must contains at least 1 special character.");
         });
     }
+    
+    public static IRuleBuilderOptionsConditions<T, string> NotPhone<T>(this IRuleBuilder<T, string> ruleBuilder)
+    {
+        return ruleBuilder.Custom((phone, context) =>
+        {
+            if (string.IsNullOrEmpty(phone))
+                context.AddFailure(@"The phone is required.");
+            else if (phone.Length < 10 || phone.Length > 10)
+                context.AddFailure(@"The password must be 10 characters long.");
+            else if (!Regex.IsMatch(phone, @"^(03|05|07|08|09)+([0-9]{8})$", RegexOptions.Singleline))
+                context.AddFailure("Phone is not valid");
+        });
+    }
 }

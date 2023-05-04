@@ -4,9 +4,9 @@ using ManageContacts.Model.Validators.Extensions;
 
 namespace ManageContacts.Model.Validators.Users;
 
-public class UserRegistrationValidator : AbstractValidator<UserRegistrationModel>
+public class UserEditValidator : AbstractValidator<UserEditModel>
 {
-    public UserRegistrationValidator()
+    public UserEditValidator()
     {
         RuleFor(x => x.FirstName)
             .NotNull()
@@ -22,7 +22,7 @@ public class UserRegistrationValidator : AbstractValidator<UserRegistrationModel
             .MinimumLength(3)
             .WithMessage("Last name must be at least 3 characters.");
         
-        RuleFor(x => x.Username)
+        RuleFor(x => x.UserName)
             .NotNull()
             .NotEmpty()
             .WithMessage("User name cannot be empty or null.")
@@ -37,6 +37,8 @@ public class UserRegistrationValidator : AbstractValidator<UserRegistrationModel
         
         RuleFor(x => x.PhoneNumber).NotPhone();
         
-        
+        RuleFor(x => x.Avatar)
+            .Must(path => string.IsNullOrEmpty(path) || File.Exists(path))
+            .WithMessage("Url avatar is invalid.");
     }
 }
