@@ -7,13 +7,25 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="wwwroot\uploads" />
+      <Folder Include="Logs" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\ManageContacts.Model\ManageContacts.Model.csproj" />
       <ProjectReference Include="..\ManageContacts.Service\ManageContacts.Service.csproj" />
       <ProjectReference Include="..\ManageContacts.Shared\ManageContacts.Shared.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.16" />
+      <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.0" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.0" />
+      <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="6.30.0" />
+      <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.30.0" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+      <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
+      <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
+      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.30.0" />
     </ItemGroup>
 
 </Project>

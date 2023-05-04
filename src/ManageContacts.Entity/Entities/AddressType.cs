@@ -4,11 +4,11 @@ using ManageContacts.Entity.Abstractions.Audits;
 
 namespace ManageContacts.Entity.Entities;
 
-public class AddressType : IFullAuditEntity
+public class AddressType : FullAuditEntity
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid AddressTypeId { get; set; }
+    public Guid Id { get; set; }
     
     [Required]
     [StringLength(100)]
@@ -21,19 +21,6 @@ public class AddressType : IFullAuditEntity
     [StringLength(1000)]
     public string? Description { get; set; }
 
-    #region [AUDIT PROPERTIES]
-    public bool Deleted { get; set; }
-    
-    public DateTime CreatedTime { get; set; }
-    
-    public Guid? CreatorId { get; set; }
-
-    public DateTime? ModifiedTime { get; set; }
-    
-    public Guid? ModifierId { get; set; }
-
-    #endregion [AUDIT PROPERTIES]
-    
     #region [REFERENCE PROPERTIES]
     public virtual User Creator { get; set; }
     

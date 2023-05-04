@@ -47,7 +47,7 @@ public static class FileExtensions
         return listFilePath;
     }
     
-    public static async Task MoveFile(string sourcePath, string targetPath)
+    public static void MoveFile(string sourcePath, string targetPath)
     {
         if (!File.Exists(sourcePath))
             throw new IOException("Source path does not exist"); 
@@ -57,7 +57,7 @@ public static class FileExtensions
         
     }
 
-    public static async Task DeleteFile(this string filePath)
+    public static void DeleteFile(this string filePath)
     {
         if (File.Exists(filePath))
         {
@@ -65,7 +65,7 @@ public static class FileExtensions
         }
     }
     
-    public static async Task DeleteFiles(this List<string> listFilePath)
+    public static void DeleteFiles(this List<string> listFilePath)
     {
         foreach (var filePath in listFilePath)
         {
@@ -76,7 +76,7 @@ public static class FileExtensions
         }
     }
     
-    public static async Task DeleteFilesInDirectory(string path)
+    public static void DeleteFilesInDirectory(string path)
     {
         var files = Directory.GetFiles(path);
         foreach (var file in files)

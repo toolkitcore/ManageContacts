@@ -7,7 +7,7 @@ public class Relative
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid ContactRelativeId { get; set; }
+    public Guid Id { get; set; }
     
     [Required]
     [Phone]

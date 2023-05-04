@@ -1,3 +1,4 @@
+using ManageContacts.Entity.Contexts;
 using ManageContacts.Entity.Entities;
 using ManageContacts.Infrastructure.Abstractions;
 using ManageContacts.Shared.Exceptions;
@@ -9,10 +10,10 @@ namespace ManageContacts.Service.CacheServices.RoleCaches;
 public class RoleCacheService : IRoleCacheService
 {
     private readonly IMemoryCache _memoryCache;
-    private readonly IRepository<User> _userRepository;
-    private readonly IRepository<UserRole> _userRoleRepository;
+    private readonly IRepository<User, ContactsContext> _userRepository;
+    private readonly IRepository<UserRole, ContactsContext> _userRoleRepository;
 
-    public RoleCacheService(IRepository<User> userRepository, IRepository<UserRole> userRoleRepository, IMemoryCache memoryCache)
+    public RoleCacheService(IRepository<User, ContactsContext> userRepository, IRepository<UserRole, ContactsContext> userRoleRepository, IMemoryCache memoryCache)
     {
         _memoryCache = memoryCache;
         _userRepository = userRepository;
@@ -21,7 +22,7 @@ public class RoleCacheService : IRoleCacheService
     public async Task<IEnumerable<string>> GetUserRolesAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         var u = await _userRepository
-            .GetAsync(predicate: u => u.UserId == userId, cancellationToken: cancellationToken).ConfigureAwait(false);
+            .GetAsync(predicate: u => u.Id == userId, cancellationToken: cancellationToken).ConfigureAwait(false);
         
         if (u == null)
             throw new NotFoundException("The user is not found");

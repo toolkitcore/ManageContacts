@@ -8,7 +8,7 @@ public class Contact
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid ContactId { get; set; }
+    public Guid Id { get; set; }
     
     [Required]
     [StringLength(100)]

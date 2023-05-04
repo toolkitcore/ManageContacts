@@ -18,12 +18,12 @@ public static class AccessTokenService
         var refreshToken = Guid.NewGuid().ToString();
         var issuedTime = DateTime.UtcNow;
         var expiredTime = issuedTime.AddMinutes(jwtSetting.ExpiredMinute);
-        var claims = new ClaimsIdentity(new[]
+        var claims = new Claim[]
         {
-            new Claim("UserId", user.UserId.ToString()),
+            new Claim("UserId", user.Id.ToString()),
             new Claim("UserName", user.UserName),
             new Claim("Email", user.Email)
-        });
+        };
         
         var jwtTokenHandler = new JwtSecurityTokenHandler();
         var tokenDescriptor = new SecurityTokenDescriptor()

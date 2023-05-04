@@ -10,17 +10,7 @@ public interface IUserService
         CancellationToken cancellationToken = default);
 
     Task<OkResponseModel<UserModel>> GetAsync(Guid userId, CancellationToken cancellationToken = default);
-    
-    Task<BaseResponseModel> CreateAsync(UserEditModel userEdit, CancellationToken cancellationToken = default);
-    
-    Task<BaseResponseModel> UpdateAsync(Guid userId, UserEditModel userEdit,CancellationToken cancellationToken = default);
-    
-    Task<BaseResponseModel> DeleteAsync(Guid userId, CancellationToken cancellationToken = default);
 
-    Task<BaseResponseModel> UndeleteUserAsync(Guid userId, CancellationToken cancellationToken = default);
-
-    Task<BaseResponseModel> UndeleteUsersAsync(IEnumerable<Guid> listOfUserIds, CancellationToken cancellationToken);
-    
     Task<BaseResponseModel> SignUpAsync(UserRegistrationModel registerUser, CancellationToken cancellationToken = default);
     
     Task<AuthorizedResponseModel> SignInAsync(UserLoginModel loginUser, CancellationToken cancellationToken = default);
@@ -36,4 +26,6 @@ public interface IUserService
         CancellationToken cancellationToken = default);
     
     Task<BaseResponseModel> UpdateProfileAsync(UserProfileEditModel userProfile,CancellationToken cancellationToken = default);
+
+    Task<bool> CheckExistUserAsync(Guid user, CancellationToken cancellationToken = default);
 }

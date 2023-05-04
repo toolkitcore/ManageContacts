@@ -8,8 +8,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        builder.HasQueryFilter(u => !u.Deleted);
-
         builder.Property(u => u.CreatedTime)
             .HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
         
@@ -25,12 +23,14 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasOne(u => u.Creator)
             .WithMany()
             .HasForeignKey(u => u.CreatorId)
-            .IsRequired(false);
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.NoAction);
         
         builder.HasOne(u => u.Modifier)
             .WithMany()
             .HasForeignKey(u => u.ModifierId)
-            .IsRequired(false);
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.NoAction);
         
 
     }

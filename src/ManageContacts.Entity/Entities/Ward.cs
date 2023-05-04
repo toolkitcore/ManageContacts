@@ -7,7 +7,7 @@ public class Ward
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid WardId { get; set; }
+    public Guid Id { get; set; }
     
     [Required]
     [StringLength(100)]

@@ -5,11 +5,11 @@ using ManageContacts.Shared.AttributeExtensions;
 
 namespace ManageContacts.Entity.Entities;
 
-public class User : IFullAuditEntity
+public class User : FullAuditEntity
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid UserId { get; set; }
+    public Guid Id { get; set; }
     
     [Required]
     [EmailOrPhone]
@@ -42,17 +42,7 @@ public class User : IFullAuditEntity
     public string PhoneNumber { get; set; }
     
     public string? Avatar { get; set; }
-    
-    #region [AUDIT PROPERTIES]
-    public bool Deleted { get; set; }
-    public DateTime CreatedTime { get; set; }
-    
-    public Guid? CreatorId { get; set; }
-    public DateTime? ModifiedTime { get; set; }
-    
-    public Guid? ModifierId { get; set; }
-    #endregion [AUDIT PROPERTIES]
-    
+
     #region [REFERENCE PROPERTIES]
     public virtual User Creator { get; set; }
     

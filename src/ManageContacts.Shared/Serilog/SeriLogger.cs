@@ -16,7 +16,7 @@ public static class SeriLogger
                 .WriteTo.Console(outputTemplate:
                     "[{Timestamp: HH:mm:ss} {Level}] {SourceContext} {NewLine} {Message:lj}{NewLine}{Exception}{NewLine}")
                 .WriteTo.File(
-                    $@"logs/{applicationName}-{environmentName}.txt",
+                    $@"Logs/{applicationName}-{environmentName}.txt",
                     rollingInterval: RollingInterval.Day,
                     outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message}{NewLine}{Exception}",
                     fileSizeLimitBytes: 10485760, // 10 MB

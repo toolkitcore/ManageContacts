@@ -73,7 +73,7 @@ namespace ManageContacts.Entity.Migrations
 
             modelBuilder.Entity("ManageContacts.Entity.Entities.AddressType", b =>
                 {
-                    b.Property<Guid>("AddressTypeId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -85,6 +85,9 @@ namespace ManageContacts.Entity.Migrations
 
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("DeletedTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasMaxLength(1000)
@@ -106,7 +109,7 @@ namespace ManageContacts.Entity.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("AddressTypeId");
+                    b.HasKey("Id");
 
                     b.HasIndex("CreatorId");
 
@@ -117,7 +120,7 @@ namespace ManageContacts.Entity.Migrations
 
             modelBuilder.Entity("ManageContacts.Entity.Entities.Company", b =>
                 {
-                    b.Property<Guid>("CompanyId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -133,14 +136,14 @@ namespace ManageContacts.Entity.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("CompanyId");
+                    b.HasKey("Id");
 
                     b.ToTable("Companies");
                 });
 
             modelBuilder.Entity("ManageContacts.Entity.Entities.Contact", b =>
                 {
-                    b.Property<Guid>("ContactId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -178,7 +181,7 @@ namespace ManageContacts.Entity.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("ContactId");
+                    b.HasKey("Id");
 
                     b.HasIndex("GroupId");
 
@@ -189,7 +192,7 @@ namespace ManageContacts.Entity.Migrations
 
             modelBuilder.Entity("ManageContacts.Entity.Entities.EmailAddress", b =>
                 {
-                    b.Property<Guid>("ContactEmailId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -212,7 +215,7 @@ namespace ManageContacts.Entity.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.HasKey("ContactEmailId");
+                    b.HasKey("Id");
 
                     b.HasIndex("ContactId");
 
@@ -235,6 +238,9 @@ namespace ManageContacts.Entity.Migrations
 
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("DeletedTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasMaxLength(1000)
@@ -267,7 +273,7 @@ namespace ManageContacts.Entity.Migrations
 
             modelBuilder.Entity("ManageContacts.Entity.Entities.Group", b =>
                 {
-                    b.Property<Guid>("GroupId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -288,7 +294,7 @@ namespace ManageContacts.Entity.Migrations
                     b.Property<Guid?>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("GroupId");
+                    b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
@@ -297,7 +303,7 @@ namespace ManageContacts.Entity.Migrations
 
             modelBuilder.Entity("ManageContacts.Entity.Entities.PhoneNumber", b =>
                 {
-                    b.Property<Guid>("ContactPhoneId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -320,7 +326,7 @@ namespace ManageContacts.Entity.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.HasKey("ContactPhoneId");
+                    b.HasKey("Id");
 
                     b.HasIndex("ContactId");
 
@@ -343,6 +349,9 @@ namespace ManageContacts.Entity.Migrations
 
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("DeletedTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasMaxLength(1000)
@@ -375,7 +384,7 @@ namespace ManageContacts.Entity.Migrations
 
             modelBuilder.Entity("ManageContacts.Entity.Entities.Relative", b =>
                 {
-                    b.Property<Guid>("ContactRelativeId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -398,7 +407,7 @@ namespace ManageContacts.Entity.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.HasKey("ContactRelativeId");
+                    b.HasKey("Id");
 
                     b.HasIndex("ContactId");
 
@@ -421,6 +430,9 @@ namespace ManageContacts.Entity.Migrations
 
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("DeletedTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasMaxLength(1000)
@@ -453,7 +465,7 @@ namespace ManageContacts.Entity.Migrations
 
             modelBuilder.Entity("ManageContacts.Entity.Entities.Role", b =>
                 {
-                    b.Property<Guid>("RoleId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -465,6 +477,9 @@ namespace ManageContacts.Entity.Migrations
 
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("DeletedTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasMaxLength(255)
@@ -481,7 +496,7 @@ namespace ManageContacts.Entity.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.HasKey("RoleId");
+                    b.HasKey("Id");
 
                     b.HasIndex("CreatorId");
 
@@ -492,7 +507,7 @@ namespace ManageContacts.Entity.Migrations
 
             modelBuilder.Entity("ManageContacts.Entity.Entities.User", b =>
                 {
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -508,6 +523,9 @@ namespace ManageContacts.Entity.Migrations
 
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("DeletedTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -551,7 +569,7 @@ namespace ManageContacts.Entity.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.HasKey("UserId");
+                    b.HasKey("Id");
 
                     b.HasIndex("CreatorId");
 
@@ -574,6 +592,12 @@ namespace ManageContacts.Entity.Migrations
                     b.Property<Guid?>("CreatorId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("DeletedTime")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("UserId", "RoleId");
 
                     b.HasIndex("CreatorId");
@@ -587,9 +611,7 @@ namespace ManageContacts.Entity.Migrations
                 {
                     b.HasOne("ManageContacts.Entity.Entities.AddressType", "AddressType")
                         .WithMany()
-                        .HasForeignKey("AddressTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AddressTypeId");
 
                     b.HasOne("ManageContacts.Entity.Entities.Contact", "Contact")
                         .WithMany("Addresses")
@@ -606,11 +628,13 @@ namespace ManageContacts.Entity.Migrations
                 {
                     b.HasOne("ManageContacts.Entity.Entities.User", "Creator")
                         .WithMany()
-                        .HasForeignKey("CreatorId");
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("ManageContacts.Entity.Entities.User", "Modifier")
                         .WithMany()
-                        .HasForeignKey("ModifierId");
+                        .HasForeignKey("ModifierId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Creator");
 
@@ -621,7 +645,7 @@ namespace ManageContacts.Entity.Migrations
                 {
                     b.HasOne("ManageContacts.Entity.Entities.Contact", "Contact")
                         .WithOne("Company")
-                        .HasForeignKey("ManageContacts.Entity.Entities.Company", "CompanyId")
+                        .HasForeignKey("ManageContacts.Entity.Entities.Company", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -639,7 +663,7 @@ namespace ManageContacts.Entity.Migrations
                     b.HasOne("ManageContacts.Entity.Entities.User", "User")
                         .WithMany("Contacts")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Group");
@@ -657,9 +681,7 @@ namespace ManageContacts.Entity.Migrations
 
                     b.HasOne("ManageContacts.Entity.Entities.EmailType", "EmailType")
                         .WithMany()
-                        .HasForeignKey("EmailTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EmailTypeId");
 
                     b.Navigation("Contact");
 
@@ -670,11 +692,13 @@ namespace ManageContacts.Entity.Migrations
                 {
                     b.HasOne("ManageContacts.Entity.Entities.User", "Creator")
                         .WithMany()
-                        .HasForeignKey("CreatorId");
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("ManageContacts.Entity.Entities.User", "Modifier")
                         .WithMany()
-                        .HasForeignKey("ModifierId");
+                        .HasForeignKey("ModifierId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Creator");
 
@@ -685,7 +709,8 @@ namespace ManageContacts.Entity.Migrations
                 {
                     b.HasOne("ManageContacts.Entity.Entities.User", "User")
                         .WithMany("Groups")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("User");
                 });
@@ -700,9 +725,7 @@ namespace ManageContacts.Entity.Migrations
 
                     b.HasOne("ManageContacts.Entity.Entities.PhoneType", "PhoneType")
                         .WithMany()
-                        .HasForeignKey("PhoneTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("PhoneTypeId");
 
                     b.Navigation("Contact");
 
@@ -713,11 +736,13 @@ namespace ManageContacts.Entity.Migrations
                 {
                     b.HasOne("ManageContacts.Entity.Entities.User", "Creator")
                         .WithMany()
-                        .HasForeignKey("CreatorId");
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("ManageContacts.Entity.Entities.User", "Modifier")
                         .WithMany()
-                        .HasForeignKey("ModifierId");
+                        .HasForeignKey("ModifierId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Creator");
 
@@ -734,9 +759,7 @@ namespace ManageContacts.Entity.Migrations
 
                     b.HasOne("ManageContacts.Entity.Entities.RelativeType", "RelativeType")
                         .WithMany()
-                        .HasForeignKey("RelativeTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RelativeTypeId");
 
                     b.Navigation("Contact");
 
@@ -747,11 +770,13 @@ namespace ManageContacts.Entity.Migrations
                 {
                     b.HasOne("ManageContacts.Entity.Entities.User", "Creator")
                         .WithMany()
-                        .HasForeignKey("CreatorId");
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("ManageContacts.Entity.Entities.User", "Modifier")
                         .WithMany()
-                        .HasForeignKey("ModifierId");
+                        .HasForeignKey("ModifierId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Creator");
 
@@ -762,11 +787,13 @@ namespace ManageContacts.Entity.Migrations
                 {
                     b.HasOne("ManageContacts.Entity.Entities.User", "Creator")
                         .WithMany()
-                        .HasForeignKey("CreatorId");
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("ManageContacts.Entity.Entities.User", "Modifier")
                         .WithMany()
-                        .HasForeignKey("ModifierId");
+                        .HasForeignKey("ModifierId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Creator");
 
@@ -777,11 +804,13 @@ namespace ManageContacts.Entity.Migrations
                 {
                     b.HasOne("ManageContacts.Entity.Entities.User", "Creator")
                         .WithMany()
-                        .HasForeignKey("CreatorId");
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("ManageContacts.Entity.Entities.User", "Modifier")
                         .WithMany()
-                        .HasForeignKey("ModifierId");
+                        .HasForeignKey("ModifierId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Creator");
 

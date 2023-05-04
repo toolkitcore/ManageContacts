@@ -7,7 +7,7 @@ public class PhoneNumber
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid ContactPhoneId { get; set; }
+    public Guid Id { get; set; }
     
     [Required]
     [Phone]

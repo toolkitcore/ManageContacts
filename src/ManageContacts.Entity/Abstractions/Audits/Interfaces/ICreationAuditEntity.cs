@@ -1,4 +1,4 @@
-namespace ManageContacts.Entity.Abstractions.Audits;
+namespace ManageContacts.Entity.Abstractions.Audits.Interfaces;
 
 public interface ICreationAuditEntity
 {

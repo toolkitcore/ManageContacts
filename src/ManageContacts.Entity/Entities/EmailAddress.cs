@@ -7,7 +7,7 @@ public class EmailAddress
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid ContactEmailId { get; set; }
+    public Guid Id { get; set; }
     
     [Required]
     [EmailAddress]

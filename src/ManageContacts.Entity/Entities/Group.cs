@@ -8,7 +8,7 @@ public class Group
 {   
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid GroupId { get; set; }
+    public Guid Id { get; set; }
     
     [Required]
     [StringLength(255)]

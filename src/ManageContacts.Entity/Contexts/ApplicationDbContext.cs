@@ -1,5 +1,5 @@
 using EFCore.BulkExtensions;
-using ManageContacts.Entity.Abstractions.Audits;
+using ManageContacts.Entity.Abstractions.Audits.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace ManageContacts.Entity.Contexts;
@@ -42,6 +42,10 @@ public class ApplicationDbContext : DbContext
             {
                 creationAuditEntity.CreatedTime = DateTime.UtcNow;
             }
+            if (entity is IDeletionAuditEntity deletionAuditEntity)
+            {
+                deletionAuditEntity.Deleted = false;
+            }
         }
         await DbContextBulkExtensions.BulkInsertAsync<TEntity>(this, listEntities, cancellationToken: cancellationToken);
     }
@@ -78,6 +82,7 @@ public class ApplicationDbContext : DbContext
             if (entity is IDeletionAuditEntity deletionAuditEntity)
             {
                 deletionAuditEntity.Deleted = true;
+                deletionAuditEntity.DeletedTime = DateTime.UtcNow;
             }
         }
         
@@ -91,6 +96,7 @@ public class ApplicationDbContext : DbContext
             if (entity is IDeletionAuditEntity deletionAuditEntity)
             {
                 deletionAuditEntity.Deleted = true;
+                deletionAuditEntity.DeletedTime = DateTime.UtcNow;
             }
         }
         
@@ -115,8 +121,13 @@ public class ApplicationDbContext : DbContext
                         creationAuditEntity.CreatedTime = DateTime.UtcNow;
                         entry.State = EntityState.Added;
                     }
+                    if (entry.Entity is IDeletionAuditEntity deletion)
+                    {
+                        deletion.Deleted = false;
+                    }
                     break;
                 case EntityState.Modified:
+                    Entry(entry.Entity).Property("Id").IsModified = false;
                     if (entry.Entity is IModificationAuditEntity modificationAuditEntity)
                     {
                         modificationAuditEntity.ModifiedTime = DateTime.UtcNow;
@@ -124,9 +135,11 @@ public class ApplicationDbContext : DbContext
                     }
                     break;
                 case EntityState.Deleted:
+                    Entry(entry.Entity).Property("Id").IsModified = false;
                     if (entry.Entity is IDeletionAuditEntity deletionAuditEntity)
                     {
                         deletionAuditEntity.Deleted = true;
+                        deletionAuditEntity.DeletedTime = DateTime.UtcNow;
                         entry.State = EntityState.Modified;
                     }
                     break;

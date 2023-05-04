@@ -7,7 +7,7 @@ public class Province
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid ProvinceId { get; set; }
+    public Guid Id { get; set; }
     
     [Required]
     [StringLength(100)]

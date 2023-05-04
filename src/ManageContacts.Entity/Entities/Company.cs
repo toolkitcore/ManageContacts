@@ -7,7 +7,7 @@ public class Company
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid CompanyId { get; set; }
+    public Guid Id { get; set; }
     
     [Required]
     [StringLength(100)]

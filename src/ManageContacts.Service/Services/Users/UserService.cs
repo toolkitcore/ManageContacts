@@ -1,6 +1,7 @@
 ﻿using System.Text.Encodings.Web;
 using AutoMapper;
 using ManageContacts.Entity.Abstractions.Paginations;
+using ManageContacts.Entity.Contexts;
 using ManageContacts.Entity.Entities;
 using ManageContacts.Infrastructure.Abstractions;
 using ManageContacts.Model.Abstractions.Responses;
@@ -12,19 +13,20 @@ using ManageContacts.Shared.Extensions;
 using ManageContacts.Shared.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace ManageContacts.Service.Services.Users;
 
 public class UserService : IUserService
 {
-    private readonly IRepository<User> _userRepository;
+    private readonly IRepository<User, ContactsContext> _userRepository;
     private readonly IMapper _mapper;
     private readonly JwtSetting _jwtSetting;
     private readonly Guid _currentUserId;
     private readonly IWebHostEnvironment _env;
     
-    public UserService(IRepository<User> userRepository, IMapper mapper, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IWebHostEnvironment env)
+    public UserService(IRepository<User, ContactsContext> userRepository, IMapper mapper, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IWebHostEnvironment env)
     {
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
@@ -36,11 +38,8 @@ public class UserService : IUserService
     #region [ADMIN]
     public async Task<OkResponseModel<IPagedList<UserModel>>> GetAllAsync(UserFilterRequestModel filter, CancellationToken cancellationToken = default)
     {
-        if (_currentUserId == Guid.Empty)
-            throw new BadRequestException("The request is invalid.");
-        
         var us = await _userRepository.PagingAllAsync(
-                predicate: u => (!string.IsNullOrEmpty(filter.SearchString) 
+                predicate: u => (string.IsNullOrEmpty(filter.SearchString) 
                                 || u.FirstName.Contains(filter.SearchString)
                                 || u.LastName.Contains(filter.SearchString)
                                 || u.Email.Contains(filter.SearchString)
@@ -58,7 +57,7 @@ public class UserService : IUserService
     public async Task<OkResponseModel<UserModel>> GetAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         var user = await _userRepository.GetAsync(
-                predicate: u => u.UserId == userId && u.Deleted,
+                predicate: u => u.Id == userId && !u.Deleted,
                 cancellationToken: cancellationToken
                 ).ConfigureAwait(false);
         
@@ -67,119 +66,25 @@ public class UserService : IUserService
 
         return new OkResponseModel<UserModel>(_mapper.Map<UserModel>(user));
     }
-
-    public async Task<BaseResponseModel> CreateAsync(UserEditModel userEdit, CancellationToken cancellationToken = default)
-    {
-        if (_currentUserId == Guid.Empty)
-            throw new BadRequestException("The request is invalid.");
-        
-        var existUser = await _userRepository.GetAsync(
-            predicate: u => u.Email == userEdit.Email && u.PhoneNumber == userEdit.PhoneNumber && u.Deleted,
-            cancellationToken: cancellationToken
-        ).ConfigureAwait(false);
-        
-        if (existUser != null)
-            throw new BadRequestException("User with the same email or phone already exists.");
-        
-        string targetPath = string.Empty;
-        if (!string.IsNullOrEmpty(userEdit.Avatar))
-            targetPath = Path.Combine(_env.WebRootPath, "images", "users", Path.GetFileName(userEdit.Avatar));
-        
-        var newUser = _mapper.Map<User>(userEdit);
-        newUser.CreatorId = _currentUserId;
-
-        await _userRepository.InsertAsync(newUser, cancellationToken).ConfigureAwait(false);
-        await _userRepository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-        
-        if(!string.IsNullOrEmpty(targetPath))
-            await FileExtensions.MoveFile(userEdit.Avatar, targetPath).ConfigureAwait(false);
-        
-        return new BaseResponseModel("Create user successfully");
-    }
-
-    public async Task<BaseResponseModel> UpdateAsync(Guid userId, UserEditModel userEdit, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
-    }
-
-
-    public async Task<BaseResponseModel> DeleteAsync(Guid userId, CancellationToken cancellationToken = default)
-    {
-        var user = await _userRepository.GetAsync(
-            predicate: u => u.UserId == userId && u.Deleted,
-            cancellationToken: cancellationToken
-        ).ConfigureAwait(false);
-        
-        if (user == null)
-            throw new BadRequestException("The request is invalid.");
-        
-        _userRepository.Delete(user);
-        await _userRepository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-
-        return new BaseResponseModel("Deleted user successfully");
-    }
-    
-
-    public async Task<BaseResponseModel> UndeleteUserAsync(Guid userId, CancellationToken cancellationToken = default)
-    {
-        var user = await _userRepository.GetAsync(
-            predicate: u => u.UserId == userId && !u.Deleted,
-            cancellationToken: cancellationToken
-        ).ConfigureAwait(false);
-        
-        if (user == null)
-            throw new BadRequestException("The request is invalid.");
-
-        user.Deleted = true;
-        _userRepository.Update(user);
-        await _userRepository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-        
-        return new BaseResponseModel("Undelete user successfully.");
-    }
-
-    public async Task<BaseResponseModel> UndeleteUsersAsync(IEnumerable<Guid> listOfUserIds, CancellationToken cancellationToken)
-    {
-        if(!listOfUserIds.NotNullOrEmpty())
-            throw new BadRequestException("The request is invalid.");
-        
-        var duplicate = listOfUserIds.HasDuplicated(i => i);
-        if(duplicate)
-            throw new BadRequestException("The list of UserIds contains duplicate values.");
-        
-        var users = await _userRepository.FindAllAsync(
-            predicate: u => listOfUserIds.Contains(u.UserId) && !u.Deleted,
-            cancellationToken: cancellationToken
-        ).ConfigureAwait(false);
-        
-        if(!users.NotNullOrEmpty() || users.Count() != listOfUserIds.Count())
-            throw new BadRequestException("The request is invalid.");
-        
-        foreach (var user in users)
-        {
-            user.Deleted = true;
-        }
-
-        await _userRepository.UpdateAsync(users.ToList(), cancellationToken).ConfigureAwait(false);
-        await _userRepository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-
-        return new BaseResponseModel("Undelete list user successfully.");
-    }
     #endregion
 
     #region [USER]
     public async Task<BaseResponseModel> SignUpAsync(UserRegistrationModel registerUser, CancellationToken cancellationToken = default)
     {
         var existUser = await _userRepository.GetAsync(
-            predicate: u => u.Email == registerUser.Email && u.PhoneNumber == registerUser.PhoneNumber,
+            predicate: u => u.UserName == registerUser.Username 
+                            && u.Email == registerUser.Email 
+                            && u.PhoneNumber == registerUser.PhoneNumber
+                            && !u.Deleted,
             cancellationToken: cancellationToken
-        );
+        ).ConfigureAwait(false);
         
         if (existUser != null)
-            throw new BadRequestException("User with the same email or phone already exists.");
+            throw new BadRequestException("User with the same username, email or phone already exists.");
         
         var newUser = _mapper.Map<User>(registerUser);
-        await _userRepository.InsertAsync(newUser, cancellationToken);
-        await _userRepository.SaveChangesAsync(cancellationToken);
+        await _userRepository.InsertAsync(newUser, cancellationToken).ConfigureAwait(false);
+        await _userRepository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
         return new BaseResponseModel("Successful account registration.");
     }
@@ -187,7 +92,7 @@ public class UserService : IUserService
     public async Task<AuthorizedResponseModel> SignInAsync(UserLoginModel loginUser, CancellationToken cancellationToken = default)
     {
         var user = await _userRepository.GetAsync(
-            predicate: u => u.Email == loginUser.Email && u.Deleted,
+            predicate: u => u.UserName == loginUser.UserName && !u.Deleted,
             cancellationToken: cancellationToken
         );
         if (user == null)
@@ -202,11 +107,8 @@ public class UserService : IUserService
 
     public async Task<AuthorizedResponseModel> RefreshTokenAsync(CancellationToken cancellationToken = default)
     {
-        if (_currentUserId == Guid.Empty)
-            throw new BadRequestException("The request is invalid.");
-        
         var user = await _userRepository.GetAsync(
-            predicate: u => u.UserId == _currentUserId && u.Deleted,
+            predicate: u => u.Id == _currentUserId && !u.Deleted,
             cancellationToken: cancellationToken
         );
         
@@ -228,17 +130,96 @@ public class UserService : IUserService
 
     public async Task<OkResponseModel<UserProfileModel>> GetProfileAsync(CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var user = await _userRepository.GetAsync(
+            predicate: u => u.Id == _currentUserId && !u.Deleted,
+            include: u => u.Include(x => x.UserRoles)
+                .ThenInclude(ur => ur.Role),
+            cancellationToken: cancellationToken
+        ).ConfigureAwait(false);
+        
+        if (user == null)
+            throw new BadRequestException("The request is invalid.");
+
+        return new OkResponseModel<UserProfileModel>(_mapper.Map<UserProfileModel>(user));
     }
 
     public async Task<BaseResponseModel> ChangePasswordAsync(ChangePasswordModel changePasswordModel, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var user = await _userRepository.GetAsync(
+            predicate: u => u.Id == _currentUserId && !u.Deleted,
+            cancellationToken: cancellationToken
+        ).ConfigureAwait(false);
+        
+        if (user == null)
+            throw new BadRequestException("The request is invalid.");
+        
+        var oldPasswordHashed = CryptoHelper.Encrypt(changePasswordModel.OldPassword, user.PasswordSalt);
+        if(!oldPasswordHashed.Equals(user.PasswordHashed))
+            throw new BadRequestException("Old password is incorrect.");
+        
+        user.PasswordHashed = CryptoHelper.Encrypt(changePasswordModel.NewPassword, user.PasswordSalt);
+
+        _userRepository.Update(user);
+        await _userRepository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+        return new BaseResponseModel("Chane password successfully");
+
     }
 
     public async Task<BaseResponseModel> UpdateProfileAsync(UserProfileEditModel userProfile, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var user = await _userRepository.GetAsync(
+            predicate: u => u.Id == _currentUserId && !u.Deleted,
+            cancellationToken: cancellationToken
+        ).ConfigureAwait(false);
+        
+        if (user == null)
+            throw new NotFoundException("The product is not found");
+        
+        var targetPath = string.Empty;
+        if (!string.IsNullOrEmpty(userProfile.Avatar)) 
+        {
+            if (string.IsNullOrEmpty(user.Avatar))
+            {
+                targetPath = Path.Combine(_env.WebRootPath, "images", "users", Path.GetFileName(userProfile.Avatar));
+            }
+            else if (user.Avatar.Equals(userProfile.Avatar))
+            {
+                user.Avatar.DeleteFile();
+                targetPath = Path.Combine(_env.WebRootPath, "images", "users", Path.GetFileName(userProfile.Avatar));
+            }
+        }
+        else
+        {
+            if (!string.IsNullOrEmpty(user.Avatar))
+            {
+                user.Avatar.DeleteFile();
+            }
+        }
+
+        user.FirstName = userProfile.FirstName;
+        user.LastName = userProfile.LastName;
+        user.PhoneNumber = userProfile.PhoneNumber;
+        user.Avatar = targetPath;
+
+        _userRepository.Update(user);
+        await _userRepository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+        if(!string.IsNullOrEmpty(targetPath))
+            FileExtensions.MoveFile(userProfile.Avatar, targetPath);
+        
+        return new BaseResponseModel("Updated user successfully");
     }
+
+    public async Task<bool> CheckExistUserAsync(Guid userId, CancellationToken cancellationToken = default)
+    {
+        var user = await _userRepository.GetAsync(
+            predicate: u => u.Id == userId && !u.Deleted,
+            cancellationToken: cancellationToken
+        ).ConfigureAwait(false);
+
+        return user != null;
+    }
+
     #endregion
 }

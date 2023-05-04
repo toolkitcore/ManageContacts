@@ -1,6 +1,12 @@
 using System.Reflection;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using ManageContacts.Service.CacheServices.RoleCaches;
+using ManageContacts.Service.Services.Roles;
+using ManageContacts.Service.Services.UploadFiles;
+using ManageContacts.Service.Services.Users;
+using ManageContacts.Shared.Consts;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ManageContacts.Service;
@@ -24,6 +30,16 @@ public static class ServiceExtensions
         });;
         
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+        services.AddScoped<IMemoryCache, MemoryCache>();
+
+        services.AddScoped<IUploadFileService, UploadFileService>();
+        
+        services.AddScoped<IRoleCacheService, RoleCacheService>();
+        
+        services.AddScoped<IUserService, UserService>();
+        
+        services.AddScoped<IRoleService, RoleService>();
         
         return services;
     }

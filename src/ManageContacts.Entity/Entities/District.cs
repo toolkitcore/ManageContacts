@@ -7,7 +7,7 @@ public class District
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid DistrictId { get; set; }
+    public Guid Id { get; set; }
     
     [Required]
     [StringLength(100)]

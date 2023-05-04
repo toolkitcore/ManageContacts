@@ -19,6 +19,8 @@ public class ContactsContextFactory : IDesignTimeDbContextFactory<ContactsContex
             opts.CommandTimeout((int)TimeSpan.FromMinutes(10).TotalSeconds);
         });
 
-        return new ContactsContext(optionsBuilder.Options);
+        var context = new ContactsContext(optionsBuilder.Options);
+
+        return context;
     }
 }
