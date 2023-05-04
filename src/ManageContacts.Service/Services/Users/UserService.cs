@@ -3,6 +3,7 @@ using ManageContacts.Entity.Abstractions.Paginations;
 using ManageContacts.Entity.Contexts;
 using ManageContacts.Entity.Entities;
 using ManageContacts.Infrastructure.Abstractions;
+using ManageContacts.Infrastructure.UnitOfWork;
 using ManageContacts.Model.Abstractions.Responses;
 using ManageContacts.Model.Models.Users;
 using ManageContacts.Service.AuthServices.AccessToken;
@@ -19,23 +20,17 @@ namespace ManageContacts.Service.Services.Users;
 
 public class UserService : IUserService
 {
-    private readonly IRepository<User, ContactsContext> _userRepository;
-    private readonly IRepository<UserRole, ContactsContext> _userRoleRepository;
+    private readonly IRepository<User> _userRepository;
+    private readonly IRepository<UserRole> _userRoleRepository;
     private readonly IMapper _mapper;
     private readonly JwtSetting _jwtSetting;
     private readonly Guid _currentUserId;
     private readonly IWebHostEnvironment _env;
     
-    public UserService(
-        IRepository<User, ContactsContext> userRepository, 
-        IRepository<UserRole, ContactsContext> userRoleRepository,
-        IMapper mapper, 
-        IConfiguration configuration, 
-        IHttpContextAccessor httpContextAccessor, 
-        IWebHostEnvironment env)
+    public UserService(IUnitOfWork<ContactsContext> _unitOfWork, IMapper mapper, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IWebHostEnvironment env)
     {
-        _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-        _userRoleRepository = userRoleRepository ?? throw new ArgumentNullException(nameof(userRoleRepository));
+        _userRepository = _unitOfWork.GetRepository<User>() ?? throw new ArgumentNullException(nameof(IRepository<User>));
+        _userRoleRepository = _unitOfWork.GetRepository<UserRole>() ?? throw new ArgumentNullException(nameof(IRepository<UserRole>));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _jwtSetting = configuration.GetOptions<JwtSetting>() ?? throw new ArgumentNullException(nameof(configuration));
         _env = env ?? throw new ArgumentNullException(nameof(env));
@@ -46,12 +41,10 @@ public class UserService : IUserService
     public async Task<OkResponseModel<IPagedList<UserModel>>> GetAllAsync(UserFilterRequestModel filter, CancellationToken cancellationToken = default)
     {
         var us = await _userRepository.PagingAllAsync(
-                predicate: u => (string.IsNullOrEmpty(filter.SearchString) 
-                                || u.FirstName.Contains(filter.SearchString)
-                                || u.LastName.Contains(filter.SearchString)
-                                || u.Email.Contains(filter.SearchString)
-                                || u.PhoneNumber.Contains(filter.SearchString)) 
-                                && u.Deleted == filter.Deleted,
+                predicate: u => 
+                    (string.IsNullOrEmpty(filter.SearchString) 
+                     || (!string.IsNullOrEmpty(filter.SearchString) && (u.FirstName.Contains(filter.SearchString) || u.LastName.Contains(filter.SearchString) || u.Email.Contains(filter.SearchString) || u.PhoneNumber.Contains(filter.SearchString)))) 
+                    && u.Deleted == filter.Deleted,
                 orderBy: u => u.OrderByDescending(x => x.CreatedTime),
                 pageIndex: filter.PageIndex,
                 pageSize: filter.PageSize,

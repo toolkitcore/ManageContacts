@@ -2,6 +2,7 @@ using System.Data.SqlClient;
 using ManageContacts.Entity.Contexts;
 using ManageContacts.Entity.Extensions;
 using ManageContacts.Infrastructure.Abstractions;
+using ManageContacts.Infrastructure.UnitOfWork;
 using ManageContacts.Shared.Configurations;
 using ManageContacts.Shared.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -30,7 +31,8 @@ public static class InfrastructureServiceExtensions
                 });
         });
         
-        services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
+        services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
+        services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         return services;
     }
 

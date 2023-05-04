@@ -8,14 +8,13 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace ManageContacts.Infrastructure.Abstractions;
 
-public class Repository<TEntity, TContext> : IRepository<TEntity, TContext> 
+public class Repository<TEntity> : IRepository<TEntity> 
     where TEntity : class
-    where TContext : DbContext 
 {
-    protected readonly TContext _dbContext;
+    protected readonly DbContext _dbContext;
     protected readonly DbSet<TEntity> _dbSet;
 
-    public Repository(TContext dbContext)
+    public Repository(DbContext dbContext)
     {
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         _dbSet = _dbContext.Set<TEntity>();

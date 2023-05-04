@@ -1,6 +1,7 @@
 using ManageContacts.Entity.Contexts;
 using ManageContacts.Entity.Entities;
 using ManageContacts.Infrastructure.Abstractions;
+using ManageContacts.Infrastructure.UnitOfWork;
 using ManageContacts.Shared.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -10,14 +11,14 @@ namespace ManageContacts.Service.CacheServices.RoleCaches;
 public class RoleCacheService : IRoleCacheService
 {
     private readonly IMemoryCache _memoryCache;
-    private readonly IRepository<User, ContactsContext> _userRepository;
-    private readonly IRepository<UserRole, ContactsContext> _userRoleRepository;
+    private readonly IRepository<User> _userRepository;
+    private readonly IRepository<UserRole> _userRoleRepository;
 
-    public RoleCacheService(IRepository<User, ContactsContext> userRepository, IRepository<UserRole, ContactsContext> userRoleRepository, IMemoryCache memoryCache)
+    public RoleCacheService(IUnitOfWork<ContactsContext> _unitOfWork, IMemoryCache memoryCache)
     {
-        _memoryCache = memoryCache;
-        _userRepository = userRepository;
-        _userRoleRepository = userRoleRepository;
+        _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
+        _userRepository = _unitOfWork.GetRepository<User>() ?? throw new ArgumentNullException(nameof(IRepository<User>));
+        _userRoleRepository = _unitOfWork.GetRepository<UserRole>() ?? throw new ArgumentNullException(nameof(IRepository<UserRole>));;
     }
     public async Task<IEnumerable<string>> GetUserRolesAsync(Guid userId, CancellationToken cancellationToken = default)
     {

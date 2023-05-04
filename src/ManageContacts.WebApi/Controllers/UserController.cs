@@ -27,7 +27,7 @@ public class UserController : BaseController
     [HttpGet]
     [Route("api/users/{id:guid}")]
     [Authorized(Roles.Administrator, Roles.Manager)]
-    public async Task<IActionResult> GetAsync([FromRoute]Guid userId, CancellationToken cancellationToken = default) 
+    public async Task<IActionResult> GetAsync([FromRoute(Name = "id")]Guid userId, CancellationToken cancellationToken = default) 
         => Ok(await _userService.GetAsync(userId, cancellationToken).ConfigureAwait(false));
 
     [HttpPost]

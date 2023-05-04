@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using Microsoft.AspNetCore.Mvc;
 
-namespace ManageContacts.Model.Abstractions.Audits;
+namespace ManageContacts.Model.Abstractions.Requests;
 
-public abstract class FilterRequestAuditModel
+[BindProperties]
+public abstract class FilterRequestModel
 {
     [BindProperty(Name = "page_index")]
     public int PageIndex { get; set; } = 1;
@@ -12,5 +12,5 @@ public abstract class FilterRequestAuditModel
     public int PageSize { get; set; } = 10;
     
     [BindProperty(Name = "search_string")]
-    public string? SearchString { get; set; } = String.Empty;
+    public string? SearchString { get; set; }
 }

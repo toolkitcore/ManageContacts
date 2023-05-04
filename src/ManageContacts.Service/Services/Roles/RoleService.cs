@@ -3,6 +3,7 @@ using ManageContacts.Entity.Abstractions.Paginations;
 using ManageContacts.Entity.Contexts;
 using ManageContacts.Entity.Entities;
 using ManageContacts.Infrastructure.Abstractions;
+using ManageContacts.Infrastructure.UnitOfWork;
 using ManageContacts.Model.Abstractions.Responses;
 using ManageContacts.Model.Models.Roles;
 using ManageContacts.Shared.Exceptions;
@@ -13,14 +14,14 @@ namespace ManageContacts.Service.Services.Roles;
 
 public class RoleService : IRoleService
 {
-    private readonly IRepository<Role, ContactsContext> _roleRepository;
-    private readonly IRepository<UserRole, ContactsContext> _userRoleRepository;
+    private readonly IRepository<Role> _roleRepository;
+    private readonly IRepository<UserRole> _userRoleRepository;
     private readonly IMapper _mapper;
     private readonly Guid _currentUserId;
-    public RoleService(IRepository<Role, ContactsContext> roleRepository, IRepository<UserRole, ContactsContext> userRoleRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+    public RoleService(IUnitOfWork<ContactsContext> _unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
     {
-        _roleRepository = roleRepository ?? throw new ArgumentNullException(nameof(roleRepository));
-        _userRoleRepository = userRoleRepository ?? throw new ArgumentNullException(nameof(userRoleRepository));
+        _roleRepository = _unitOfWork.GetRepository<Role>() ?? throw new ArgumentNullException(nameof(Repository<Role>));
+        _userRoleRepository = _unitOfWork.GetRepository<UserRole>() ?? throw new ArgumentNullException(nameof(Repository<UserRole>));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _currentUserId = httpContextAccessor.GetCurrentUserId();
     }
@@ -28,7 +29,7 @@ public class RoleService : IRoleService
     {
         var roles = await _roleRepository.PagingAllAsync(
             predicate: u => (string.IsNullOrEmpty(filter.SearchString) 
-                            || u.Name.Contains(filter.SearchString)
+                            || (!string.IsNullOrEmpty(filter.SearchString) && u.Name.Contains(filter.SearchString))
                             || (!string.IsNullOrEmpty(u.Description) && (u.Description.Contains(filter.SearchString))))
                             && u.Deleted == filter.Deleted,
             orderBy: u => u.OrderByDescending(x => x.CreatedTime),
