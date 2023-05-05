@@ -4,8 +4,10 @@ using ManageContacts.Entity.Contexts;
 using ManageContacts.Entity.Entities;
 using ManageContacts.Infrastructure.Abstractions;
 using ManageContacts.Infrastructure.UnitOfWork;
+using ManageContacts.Model.Abstractions.Paginations;
 using ManageContacts.Model.Abstractions.Responses;
 using ManageContacts.Model.Models.Users;
+using ManageContacts.Service.Abstractions.Core;
 using ManageContacts.Service.AuthServices.AccessToken;
 using ManageContacts.Shared.Configurations;
 using ManageContacts.Shared.Exceptions;
@@ -15,30 +17,26 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace ManageContacts.Service.Services.Users;
 
-public class UserService : IUserService
+public class UserService : BaseService ,IUserService
 {
     private readonly IRepository<User> _userRepository;
     private readonly IRepository<UserRole> _userRoleRepository;
-    private readonly IMapper _mapper;
     private readonly JwtSetting _jwtSetting;
-    private readonly Guid _currentUserId;
-    private readonly IWebHostEnvironment _env;
-    
-    public UserService(IUnitOfWork<ContactsContext> _unitOfWork, IMapper mapper, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IWebHostEnvironment env)
+
+    public UserService(IUnitOfWork<ContactsContext> uow, IMapper mapper, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, ILogger<UserService> logger,IWebHostEnvironment env)
+    : base(uow, httpContextAccessor, mapper, logger, env)
     {
-        _userRepository = _unitOfWork.GetRepository<User>() ?? throw new ArgumentNullException(nameof(IRepository<User>));
-        _userRoleRepository = _unitOfWork.GetRepository<UserRole>() ?? throw new ArgumentNullException(nameof(IRepository<UserRole>));
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _jwtSetting = configuration.GetOptions<JwtSetting>() ?? throw new ArgumentNullException(nameof(configuration));
-        _env = env ?? throw new ArgumentNullException(nameof(env));
-        _currentUserId = httpContextAccessor.GetCurrentUserId();
+        _userRepository = uow.GetRepository<User>();
+        _userRoleRepository = uow.GetRepository<UserRole>();
     }
     
     #region [ADMIN]
-    public async Task<OkResponseModel<IPagedList<UserModel>>> GetAllAsync(UserFilterRequestModel filter, CancellationToken cancellationToken = default)
+    public async Task<OkResponseModel<PaginationList<UserModel>>> GetAllAsync(UserFilterRequestModel filter, CancellationToken cancellationToken = default)
     {
         var us = await _userRepository.PagingAllAsync(
                 predicate: u => 
@@ -51,7 +49,7 @@ public class UserService : IUserService
                 cancellationToken: cancellationToken
             ).ConfigureAwait(false);
 
-        return new OkResponseModel<IPagedList<UserModel>>(_mapper.Map<PagedList<UserModel>>(us));
+        return new OkResponseModel<PaginationList<UserModel>>(_mapper.Map<PaginationList<UserModel>>(us));
     }
 
     public async Task<OkResponseModel<UserModel>> GetAsync(Guid userId, CancellationToken cancellationToken = default)
@@ -89,7 +87,7 @@ public class UserService : IUserService
         userNew.Avatar = targetPath;
 
         await _userRepository.InsertAsync(userNew, cancellationToken).ConfigureAwait(false);
-        await _userRepository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await _uow.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         
         if(!string.IsNullOrEmpty(targetPath))
             FileExtensions.MoveFile(userEdit.Avatar, targetPath);
@@ -144,7 +142,7 @@ public class UserService : IUserService
         userUpdate.Avatar = targetPath;
 
         _userRepository.Update(userUpdate);
-        await _userRepository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await _uow.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         
         if(!string.IsNullOrEmpty(targetPath))
             FileExtensions.MoveFile(userEdit.Avatar, targetPath);
@@ -167,9 +165,10 @@ public class UserService : IUserService
             cancellationToken: cancellationToken
         ).ConfigureAwait(false);
         
+        _uow.BeginTransaction();
         _userRepository.Delete(user);
         await _userRoleRepository.DeleteAsync(urs.ToList(), cancellationToken).ConfigureAwait(false);
-        await _userRepository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await _uow.CommitAsync(cancellationToken).ConfigureAwait(false);
         
         return new BaseResponseModel("Delete user successful.");
     }
@@ -199,9 +198,10 @@ public class UserService : IUserService
             ur.Deleted = false;
         }  
         
+        _uow.BeginTransaction();
         _userRepository.Update(user);
         await _userRoleRepository.UpdateAsync(urs.ToList(), cancellationToken).ConfigureAwait(false);
-        await _userRepository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await _uow.CommitAsync(cancellationToken).ConfigureAwait(false);
         
         return new BaseResponseModel("Recover user successful");
     }

@@ -47,7 +47,7 @@ public class UserController : BaseController
     [HttpDelete]
     [Route("api/users/{id:guid}")]
     [Authorized(Roles.Administrator, Roles.Manager)]
-    public async Task<IActionResult> DeleteAsync([FromRoute(Name = "id")] Guid userId,
+    public async Task<IActionResult> DeleteAsync([FromRoute(Name = "id")]Guid userId,
         CancellationToken cancellationToken = default)
         => Ok(await _userService.DeleteAsync(userId, cancellationToken).ConfigureAwait(false));
 

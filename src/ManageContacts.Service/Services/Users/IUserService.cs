@@ -1,4 +1,5 @@
 ﻿using ManageContacts.Entity.Abstractions.Paginations;
+using ManageContacts.Model.Abstractions.Paginations;
 using ManageContacts.Model.Abstractions.Responses;
 using ManageContacts.Model.Models.Users;
 
@@ -6,7 +7,7 @@ namespace ManageContacts.Service.Services.Users;
 
 public interface IUserService
 {
-    Task<OkResponseModel<IPagedList<UserModel>>> GetAllAsync(UserFilterRequestModel filter,
+    Task<OkResponseModel<PaginationList<UserModel>>> GetAllAsync(UserFilterRequestModel filter,
         CancellationToken cancellationToken = default);
 
     Task<OkResponseModel<UserModel>> GetAsync(Guid userId, CancellationToken cancellationToken = default);

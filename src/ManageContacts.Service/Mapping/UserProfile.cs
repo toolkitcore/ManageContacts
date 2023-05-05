@@ -1,12 +1,12 @@
 using AutoMapper;
 using ManageContacts.Entity.Abstractions.Paginations;
 using ManageContacts.Entity.Entities;
+using ManageContacts.Model.Abstractions.Paginations;
 using ManageContacts.Model.Models.Roles;
 using ManageContacts.Model.Models.Users;
-using ManageContacts.Shared.Extensions;
 using ManageContacts.Shared.Helper;
 
-namespace ManageContacts.Service.Mapping.Users;
+namespace ManageContacts.Service.Mapping;
 
 public class UserProfile : Profile
 {
@@ -41,7 +41,7 @@ public class UserProfile : Profile
             });
         
         CreateMap<User, UserModel>();
-        CreateMap<PagedList<User>, PagedList<UserModel>>();
+        CreateMap<IPagedList<User>, PaginationList<UserModel>>();
 
     }
 }

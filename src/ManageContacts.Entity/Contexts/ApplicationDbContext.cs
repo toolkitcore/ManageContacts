@@ -23,7 +23,7 @@ public class ApplicationDbContext : DbContext
         return base.SaveChanges();
     }
     
-    public void BulkInsert<TEntity>(IList<TEntity> listEntities) where TEntity : class
+    public void BulkInsertCustomer<TEntity>(IList<TEntity> listEntities) where TEntity : class
     {
         foreach (var entity in listEntities)
         {

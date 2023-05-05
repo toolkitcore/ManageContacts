@@ -14,8 +14,10 @@ public interface IUnitOfWork : IDisposable
 
     void Commit();
 
+    Task CommitAsync(CancellationToken cancellationToken = default);
+
     void BeginTransaction();
-    
+
     void SetIsolationLevel(IsolationLevel isolationLevel);
         
     IRepository<TEntity> GetRepository<TEntity>() where TEntity : class;

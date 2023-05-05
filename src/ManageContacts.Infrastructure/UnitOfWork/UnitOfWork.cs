@@ -23,6 +23,8 @@ public class UnitOfWork<TContext> : IUnitOfWork<TContext> where TContext : DbCon
     {
         StartNewTransactionIfNeeded();
     }
+    
+    
 
     public void Commit()
     {
@@ -30,11 +32,46 @@ public class UnitOfWork<TContext> : IUnitOfWork<TContext> where TContext : DbCon
 
         if (_transaction != null)
         {
-            _transaction.Commit();
-            _transaction.Dispose();
-            _transaction = null;
+            try
+            {
+                _transaction.Commit();
+            }
+            catch (Exception exception)
+            {
+                _transaction.Rollback();
+                throw exception;
+            }
+            finally
+            {
+                _transaction.Dispose();
+                _transaction = null;
+            }
         }
     }
+
+    public async Task CommitAsync(CancellationToken cancellationToken = default)
+    {
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        
+        if (_transaction != null)
+        {
+            try
+            {
+                await _transaction.CommitAsync(cancellationToken);
+            }
+            catch (Exception exception)
+            {
+                await _transaction.RollbackAsync(cancellationToken);
+                throw exception;
+            }
+            finally
+            {
+                await _transaction.DisposeAsync();
+                _transaction = null;
+            }
+        }
+    }
+    
 
     public IRepository<TEntity> GetRepository<TEntity>() where TEntity : class
     {
