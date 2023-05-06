@@ -7,30 +7,34 @@ public interface IRepositoryBase<TEntity> where TEntity : class
     void Insert(TEntity entity);
         
     void Insert(IList<TEntity> entities);
+
+    void BulkInsert<TEntity>(IList<TEntity> listEntities) where TEntity : class;
         
     Task InsertAsync(TEntity entity, CancellationToken cancellationToken = default);
         
     Task InsertAsync(IList<TEntity> entities, CancellationToken cancellationToken = default);
+
+    Task BulkInsertAsync<TEntity>(IList<TEntity> listEntities, CancellationToken cancellationToken = default)
+        where TEntity : class;
         
     void Update(TEntity entity);
         
     void Update(IList<TEntity> entities);
+    
+    void BulkUpdate<TEntity>(IList<TEntity> listEntities) where TEntity : class;
 
-    Task UpdateAsync(IList<TEntity> entities, CancellationToken cancellationToken = default);
+    Task BulkUpdateAsync<TEntity>(IList<TEntity> listEntities, CancellationToken cancellationToken = default)
+        where TEntity : class;
 
     void Delete(TEntity entity);
-        
-    void Delete(IList<TEntity> entities);
 
-    Task DeleteAsync(IList<TEntity> entities, CancellationToken cancellationToken = default);
+    void BulkDelete<TEntity>(IList<TEntity> listEntities) where TEntity : class;
 
+    Task BulkDeleteAsync<TEntity>(IList<TEntity> listEntities, CancellationToken cancellationToken = default)
+        where TEntity : class;
+    
     bool SaveChanges();
     
     Task<bool> SaveChangesAsync(CancellationToken cancellationToken);
-
-    Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken);
-
-    Task EndTransactionAsync(CancellationToken cancellationToken);
     
-    Task RollbackTransactionAsync(CancellationToken cancellationToken);
 }

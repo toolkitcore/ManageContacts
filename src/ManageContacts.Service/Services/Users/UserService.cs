@@ -16,6 +16,7 @@ using ManageContacts.Shared.Helper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -26,10 +27,12 @@ public class UserService : BaseService ,IUserService
     private readonly IRepository<User> _userRepository;
     private readonly IRepository<UserRole> _userRoleRepository;
     private readonly JwtSetting _jwtSetting;
+    private readonly IMemoryCache _memoryCache;
 
-    public UserService(IUnitOfWork<ContactsContext> uow, IMapper mapper, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, ILogger<UserService> logger,IWebHostEnvironment env)
+    public UserService(IUnitOfWork<ContactsContext> uow, IMapper mapper, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, ILogger<UserService> logger,IWebHostEnvironment env, IMemoryCache memoryCache)
     : base(uow, httpContextAccessor, mapper, logger, env)
     {
+        _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
         _jwtSetting = configuration.GetOptions<JwtSetting>() ?? throw new ArgumentNullException(nameof(configuration));
         _userRepository = uow.GetRepository<User>();
         _userRoleRepository = uow.GetRepository<UserRole>();
@@ -140,9 +143,10 @@ public class UserService : BaseService ,IUserService
         var userUpdate = _mapper.Map<User>(userEdit);
         userUpdate.ModifierId = _currentUserId;
         userUpdate.Avatar = targetPath;
-
+        
         _userRepository.Update(userUpdate);
         await _uow.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        _memoryCache.Remove($"user_roles_{userId}");
         
         if(!string.IsNullOrEmpty(targetPath))
             FileExtensions.MoveFile(userEdit.Avatar, targetPath);
@@ -167,8 +171,9 @@ public class UserService : BaseService ,IUserService
         
         _uow.BeginTransaction();
         _userRepository.Delete(user);
-        await _userRoleRepository.DeleteAsync(urs.ToList(), cancellationToken).ConfigureAwait(false);
+        await _userRoleRepository.BulkDeleteAsync(urs.ToList(), cancellationToken).ConfigureAwait(false);
         await _uow.CommitAsync(cancellationToken).ConfigureAwait(false);
+        _memoryCache.Remove($"user_roles_{userId}");
         
         return new BaseResponseModel("Delete user successful.");
     }
@@ -200,7 +205,7 @@ public class UserService : BaseService ,IUserService
         
         _uow.BeginTransaction();
         _userRepository.Update(user);
-        await _userRoleRepository.UpdateAsync(urs.ToList(), cancellationToken).ConfigureAwait(false);
+        await _userRoleRepository.BulkUpdateAsync(urs.ToList(), cancellationToken).ConfigureAwait(false);
         await _uow.CommitAsync(cancellationToken).ConfigureAwait(false);
         
         return new BaseResponseModel("Recover user successful");
@@ -224,7 +229,7 @@ public class UserService : BaseService ,IUserService
         
         var newUser = _mapper.Map<User>(registerUser);
         await _userRepository.InsertAsync(newUser, cancellationToken).ConfigureAwait(false);
-        await _userRepository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await _uow.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
         return new BaseResponseModel("Successful account registration.");
     }
@@ -300,7 +305,7 @@ public class UserService : BaseService ,IUserService
         user.PasswordHashed = CryptoHelper.Encrypt(changePasswordModel.NewPassword, user.PasswordSalt);
 
         _userRepository.Update(user);
-        await _userRepository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await _uow.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
         return new BaseResponseModel("Change password successfully");
 
@@ -343,7 +348,7 @@ public class UserService : BaseService ,IUserService
         user.Avatar = targetPath;
 
         _userRepository.Update(user);
-        await _userRepository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await _uow.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
         if(!string.IsNullOrEmpty(targetPath))
             FileExtensions.MoveFile(userProfile.Avatar, targetPath);
@@ -360,6 +365,5 @@ public class UserService : BaseService ,IUserService
 
         return user != null;
     }
-
     #endregion
 }

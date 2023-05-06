@@ -91,8 +91,16 @@ public static class ContactsContextSeed
                 }
             }
         };
+
+        var users = new List<User>()
+        {
+
+        };
         
-        return new List<User>() { admin, manager };
+        users.Add(admin);
+        users.Add(manager);
+        
+        return users;
 
 
     }

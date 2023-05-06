@@ -10,15 +10,17 @@ namespace ManageContacts.Service.CacheServices.RoleCaches;
 
 public class RoleCacheService : IRoleCacheService
 {
+    private readonly IUnitOfWork<ContactsContext> _uow;
     private readonly IMemoryCache _memoryCache;
     private readonly IRepository<User> _userRepository;
     private readonly IRepository<UserRole> _userRoleRepository;
 
-    public RoleCacheService(IUnitOfWork<ContactsContext> _unitOfWork, IMemoryCache memoryCache)
+    public RoleCacheService(IUnitOfWork<ContactsContext> uow, IMemoryCache memoryCache)
     {
+        _uow = uow ?? throw new ArgumentNullException(nameof(uow));
         _memoryCache = memoryCache ?? throw new ArgumentNullException(nameof(memoryCache));
-        _userRepository = _unitOfWork.GetRepository<User>() ?? throw new ArgumentNullException(nameof(IRepository<User>));
-        _userRoleRepository = _unitOfWork.GetRepository<UserRole>() ?? throw new ArgumentNullException(nameof(IRepository<UserRole>));;
+        _userRepository = uow.GetRepository<User>();
+        _userRoleRepository = uow.GetRepository<UserRole>();
     }
     public async Task<IEnumerable<string>> GetUserRolesAsync(Guid userId, CancellationToken cancellationToken = default)
     {
@@ -36,10 +38,10 @@ public class RoleCacheService : IRoleCacheService
                 predicate: ur => ur.UserId == userId,
                 include: r => r.Include(x => x.Role),
                 cancellationToken: cancellationToken).ConfigureAwait(false);
-
+        
         roles = urs.Select(ur => ur.Role.Name);
 
-        var cacheOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(30));
+        var cacheOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromDays(1));
 
         _memoryCache.Set(cacheKey, roles, cacheOptions);
 

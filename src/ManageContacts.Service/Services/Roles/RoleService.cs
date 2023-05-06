@@ -6,26 +6,24 @@ using ManageContacts.Infrastructure.Abstractions;
 using ManageContacts.Infrastructure.UnitOfWork;
 using ManageContacts.Model.Abstractions.Responses;
 using ManageContacts.Model.Models.Roles;
+using ManageContacts.Service.Abstractions.Core;
 using ManageContacts.Shared.Exceptions;
 using ManageContacts.Shared.Extensions;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace ManageContacts.Service.Services.Roles;
 
-public class RoleService : IRoleService
+public class RoleService : BaseService ,IRoleService
 {
-    private readonly IUnitOfWork<ContactsContext> _unitOfWork;
     private readonly IRepository<Role> _roleRepository;
     private readonly IRepository<UserRole> _userRoleRepository;
-    private readonly IMapper _mapper;
-    private readonly Guid _currentUserId;
-    public RoleService(IUnitOfWork<ContactsContext> unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+    public RoleService(IUnitOfWork<ContactsContext> uow, IMapper mapper, IHttpContextAccessor httpContextAccessor, ILogger<RoleService> logger, IWebHostEnvironment env) 
+        : base(uow, httpContextAccessor, mapper, logger, env)
     {
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-        _unitOfWork = _unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
-        _roleRepository = unitOfWork.GetRepository<Role>();
-        _userRoleRepository = unitOfWork.GetRepository<UserRole>();
-        _currentUserId = httpContextAccessor.GetCurrentUserId();
+        _roleRepository = uow.GetRepository<Role>();
+        _userRoleRepository = uow.GetRepository<UserRole>();
     }
     public async Task<OkResponseModel<IPagedList<RoleModel>>> GetAllAsync(RoleFilterRequestModel filter, CancellationToken cancellationToken = default)
     {
@@ -69,7 +67,7 @@ public class RoleService : IRoleService
         var newRole = _mapper.Map<Role>(roleEdit);
         newRole.CreatorId = _currentUserId;
         await _roleRepository.InsertAsync(newRole, cancellationToken).ConfigureAwait(false);
-        await _unitOfWork.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await _uow.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
         return new BaseResponseModel("Create role successful.");
     }
@@ -97,7 +95,7 @@ public class RoleService : IRoleService
         role.ModifierId = _currentUserId;
         
         _roleRepository.Update(role);
-        await _unitOfWork.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await _uow.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
         return new BaseResponseModel("Updated role successfully");
 
@@ -118,19 +116,10 @@ public class RoleService : IRoleService
             cancellationToken: cancellationToken
         ).ConfigureAwait(false);
 
-        try
-        {
-            _unitOfWork.BeginTransaction();
-            _roleRepository.Delete(role);
-            await _userRoleRepository.UpdateAsync(urs.ToList(), cancellationToken).ConfigureAwait(false);
-            await _unitOfWork.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-            _unitOfWork.Commit();
-        }
-        catch
-        {
-            _unitOfWork.Rollback();
-            throw new BadRequestException("Delete role failure.");
-        }
+        _uow.BeginTransaction();
+        _roleRepository.Delete(role);
+        await _userRoleRepository.BulkDeleteAsync(urs.ToList(), cancellationToken).ConfigureAwait(false);
+        await _uow.CommitAsync(cancellationToken);
         
         return new BaseResponseModel("Deleted role successful");
     }
@@ -159,10 +148,10 @@ public class RoleService : IRoleService
         {
             ur.Deleted = false;
         }
-        
+        _uow.BeginTransaction();
         _roleRepository.Update(role);
-        await _userRoleRepository.UpdateAsync(urs.ToList(), cancellationToken).ConfigureAwait(false);
-        await _roleRepository.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await _userRoleRepository.BulkUpdateAsync(urs.ToList(), cancellationToken).ConfigureAwait(false);
+        await _uow.CommitAsync(cancellationToken);
         
         return new BaseResponseModel("Undeleted role successful");
     }
