@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ManageContacts.Entity.Migrations
 {
     [DbContext(typeof(ContactsContext))]
-    [Migration("20230503085012_init-database")]
+    [Migration("20230507122509_init-database")]
     partial class initdatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -228,7 +228,7 @@ namespace ManageContacts.Entity.Migrations
 
             modelBuilder.Entity("ManageContacts.Entity.Entities.EmailType", b =>
                 {
-                    b.Property<Guid>("EmailTypeId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -264,7 +264,7 @@ namespace ManageContacts.Entity.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("EmailTypeId");
+                    b.HasKey("Id");
 
                     b.HasIndex("CreatorId");
 
@@ -339,7 +339,7 @@ namespace ManageContacts.Entity.Migrations
 
             modelBuilder.Entity("ManageContacts.Entity.Entities.PhoneType", b =>
                 {
-                    b.Property<Guid>("PhoneTypeId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -375,7 +375,7 @@ namespace ManageContacts.Entity.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("PhoneTypeId");
+                    b.HasKey("Id");
 
                     b.HasIndex("CreatorId");
 
@@ -420,7 +420,7 @@ namespace ManageContacts.Entity.Migrations
 
             modelBuilder.Entity("ManageContacts.Entity.Entities.RelativeType", b =>
                 {
-                    b.Property<Guid>("RelativeTypeId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -456,7 +456,7 @@ namespace ManageContacts.Entity.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("RelativeTypeId");
+                    b.HasKey("Id");
 
                     b.HasIndex("CreatorId");
 

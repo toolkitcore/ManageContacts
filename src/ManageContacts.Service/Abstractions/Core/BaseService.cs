@@ -21,7 +21,7 @@ public class BaseService : IBaseService
     {
         _uow = uow ?? throw new ArgumentNullException(nameof(uow));
         _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(uow));
+        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _env = env ?? throw new ArgumentNullException(nameof(env));
 

@@ -4,6 +4,7 @@ using ManageContacts.Entity.Contexts;
 using ManageContacts.Entity.Entities;
 using ManageContacts.Infrastructure.Abstractions;
 using ManageContacts.Infrastructure.UnitOfWork;
+using ManageContacts.Model.Abstractions.Paginations;
 using ManageContacts.Model.Abstractions.Responses;
 using ManageContacts.Model.Models.Roles;
 using ManageContacts.Service.Abstractions.Core;
@@ -25,7 +26,7 @@ public class RoleService : BaseService ,IRoleService
         _roleRepository = uow.GetRepository<Role>();
         _userRoleRepository = uow.GetRepository<UserRole>();
     }
-    public async Task<OkResponseModel<IPagedList<RoleModel>>> GetAllAsync(RoleFilterRequestModel filter, CancellationToken cancellationToken = default)
+    public async Task<OkResponseModel<PaginationList<RoleModel>>> GetAllAsync(RoleFilterRequestModel filter, CancellationToken cancellationToken = default)
     {
         var roles = await _roleRepository.PagingAllAsync(
             predicate: u => (string.IsNullOrEmpty(filter.SearchString) 
@@ -37,8 +38,11 @@ public class RoleService : BaseService ,IRoleService
             pageSize: filter.PageSize,
             cancellationToken: cancellationToken
         ).ConfigureAwait(false);
-        
-        return new OkResponseModel<IPagedList<RoleModel>>(_mapper.Map<PagedList<RoleModel>>(roles));
+
+        if (roles.NotNullOrEmpty())
+            return new OkResponseModel<PaginationList<RoleModel>>(_mapper.Map<PaginationList<RoleModel>>(roles));
+
+        return new OkResponseModel<PaginationList<RoleModel>>(new PaginationList<RoleModel>());
     }
 
     public async Task<OkResponseModel<RoleModel>> GetAsync(Guid roleId, CancellationToken cancellationToken = default)

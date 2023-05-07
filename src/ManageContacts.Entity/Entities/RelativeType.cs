@@ -8,7 +8,7 @@ public class RelativeType : FullAuditEntity
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid RelativeTypeId { get; set; }
+    public Guid Id { get; set; }
     
     [Required]
     [StringLength(100)]

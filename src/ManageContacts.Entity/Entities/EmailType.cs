@@ -8,7 +8,7 @@ public class EmailType : FullAuditEntity
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid EmailTypeId { get; set; }
+    public Guid Id { get; set; }
     
     [Required]
     [StringLength(100)]

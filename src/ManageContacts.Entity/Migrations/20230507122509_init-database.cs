@@ -78,7 +78,7 @@ namespace ManageContacts.Entity.Migrations
                 name: "EmailTypes",
                 columns: table => new
                 {
-                    EmailTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TypeName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     UnaccentedName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
@@ -91,7 +91,7 @@ namespace ManageContacts.Entity.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EmailTypes", x => x.EmailTypeId);
+                    table.PrimaryKey("PK_EmailTypes", x => x.Id);
                     table.ForeignKey(
                         name: "FK_EmailTypes_Users_CreatorId",
                         column: x => x.CreatorId,
@@ -130,7 +130,7 @@ namespace ManageContacts.Entity.Migrations
                 name: "PhoneTypes",
                 columns: table => new
                 {
-                    PhoneTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TypeName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     UnaccentedName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
@@ -143,7 +143,7 @@ namespace ManageContacts.Entity.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PhoneTypes", x => x.PhoneTypeId);
+                    table.PrimaryKey("PK_PhoneTypes", x => x.Id);
                     table.ForeignKey(
                         name: "FK_PhoneTypes_Users_CreatorId",
                         column: x => x.CreatorId,
@@ -160,7 +160,7 @@ namespace ManageContacts.Entity.Migrations
                 name: "RelativeTypes",
                 columns: table => new
                 {
-                    RelativeTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TypeName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     UnaccentedName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
@@ -173,7 +173,7 @@ namespace ManageContacts.Entity.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RelativeTypes", x => x.RelativeTypeId);
+                    table.PrimaryKey("PK_RelativeTypes", x => x.Id);
                     table.ForeignKey(
                         name: "FK_RelativeTypes_Users_CreatorId",
                         column: x => x.CreatorId,
@@ -353,7 +353,7 @@ namespace ManageContacts.Entity.Migrations
                         name: "FK_EmailAddresses_EmailTypes_EmailTypeId",
                         column: x => x.EmailTypeId,
                         principalTable: "EmailTypes",
-                        principalColumn: "EmailTypeId");
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -380,7 +380,7 @@ namespace ManageContacts.Entity.Migrations
                         name: "FK_PhoneNumbers_PhoneTypes_PhoneTypeId",
                         column: x => x.PhoneTypeId,
                         principalTable: "PhoneTypes",
-                        principalColumn: "PhoneTypeId");
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -407,7 +407,7 @@ namespace ManageContacts.Entity.Migrations
                         name: "FK_Relatives_RelativeTypes_RelativeTypeId",
                         column: x => x.RelativeTypeId,
                         principalTable: "RelativeTypes",
-                        principalColumn: "RelativeTypeId");
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(

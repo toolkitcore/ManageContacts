@@ -8,7 +8,7 @@ public class PhoneType : FullAuditEntity
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid PhoneTypeId { get; set; }
+    public Guid Id { get; set; }
     
     [Required]
     [StringLength(100)]
