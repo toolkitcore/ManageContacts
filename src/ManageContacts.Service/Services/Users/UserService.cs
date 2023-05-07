@@ -41,7 +41,7 @@ public class UserService : BaseService ,IUserService
     #region [ADMIN]
     public async Task<OkResponseModel<PaginationList<UserModel>>> GetAllAsync(UserFilterRequestModel filter, CancellationToken cancellationToken = default)
     {
-        var us = await _userRepository.PagingAllAsync(
+        var users = await _userRepository.PagingAllAsync(
                 predicate: u => 
                     (string.IsNullOrEmpty(filter.SearchString) 
                      || (!string.IsNullOrEmpty(filter.SearchString) && (u.FirstName.Contains(filter.SearchString) || u.LastName.Contains(filter.SearchString) || u.Email.Contains(filter.SearchString) || u.PhoneNumber.Contains(filter.SearchString)))) 
@@ -52,7 +52,10 @@ public class UserService : BaseService ,IUserService
                 cancellationToken: cancellationToken
             ).ConfigureAwait(false);
 
-        return new OkResponseModel<PaginationList<UserModel>>(_mapper.Map<PaginationList<UserModel>>(us));
+        if (users.NotNullOrEmpty())
+            return new OkResponseModel<PaginationList<UserModel>>(_mapper.Map<PaginationList<UserModel>>(users));
+
+        return new OkResponseModel<PaginationList<UserModel>>(new PaginationList<UserModel>());
     }
 
     public async Task<OkResponseModel<UserModel>> GetAsync(Guid userId, CancellationToken cancellationToken = default)
@@ -71,10 +74,10 @@ public class UserService : BaseService ,IUserService
     public async Task<BaseResponseModel> CreateAsync(UserEditModel userEdit, CancellationToken cancellationToken = default)
     {
         var existUser = await _userRepository.GetAsync(
-            predicate: u => u.UserName == userEdit.UserName 
+            predicate: u => (u.UserName == userEdit.UserName 
                             || u.Email == userEdit.Email 
-                            || u.PhoneNumber == userEdit.PhoneNumber
-                            || !u.Deleted,
+                            || u.PhoneNumber == userEdit.PhoneNumber)
+                            && !u.Deleted,
             cancellationToken: cancellationToken
         ).ConfigureAwait(false);
 
@@ -109,10 +112,10 @@ public class UserService : BaseService ,IUserService
             throw new BadRequestException("The request is invalid.");
 
         var existUser = await _userRepository.GetAsync(
-            predicate: u => u.UserName == userEdit.UserName 
-                            || u.Email == userEdit.Email 
-                            || u.PhoneNumber == userEdit.PhoneNumber
-                            || !u.Deleted,
+            predicate: u => (u.UserName == userEdit.UserName 
+                             || u.Email == userEdit.Email 
+                             || u.PhoneNumber == userEdit.PhoneNumber)
+                            && !u.Deleted,
             cancellationToken: cancellationToken
         ).ConfigureAwait(false);
 
@@ -170,7 +173,7 @@ public class UserService : BaseService ,IUserService
         ).ConfigureAwait(false);
         
         _uow.BeginTransaction();
-        _userRepository.Delete(user);
+        _userRepository.Delete(user); 
         await _userRoleRepository.BulkDeleteAsync(urs.ToList(), cancellationToken).ConfigureAwait(false);
         await _uow.CommitAsync(cancellationToken).ConfigureAwait(false);
         _memoryCache.Remove($"user_roles_{userId}");
@@ -193,7 +196,7 @@ public class UserService : BaseService ,IUserService
             throw new BadRequestException("Records deleted more than 30 days old cannot be recovered.");
         
         var urs = await _userRoleRepository.FindAllAsync(
-            predicate: ur => ur.RoleId == userId && ur.Deleted,
+            predicate: ur => ur.UserId == userId && ur.Deleted,
             cancellationToken: cancellationToken
         ).ConfigureAwait(false);
 
@@ -217,10 +220,10 @@ public class UserService : BaseService ,IUserService
     public async Task<BaseResponseModel> SignUpAsync(UserRegistrationModel registerUser, CancellationToken cancellationToken = default)
     {
         var existUser = await _userRepository.GetAsync(
-            predicate: u => u.UserName == registerUser.Username 
-                            || u.Email == registerUser.Email 
-                            || u.PhoneNumber == registerUser.PhoneNumber
-                            || !u.Deleted,
+            predicate: u => (u.UserName == registerUser.UserName 
+                             || u.Email == registerUser.Email 
+                             || u.PhoneNumber == registerUser.PhoneNumber)
+                            && !u.Deleted,
             cancellationToken: cancellationToken
         ).ConfigureAwait(false);
         

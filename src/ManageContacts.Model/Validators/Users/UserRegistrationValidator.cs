@@ -22,7 +22,7 @@ public class UserRegistrationValidator : AbstractValidator<UserRegistrationModel
             .MinimumLength(3)
             .WithMessage("Last name must be at least 3 characters.");
         
-        RuleFor(x => x.Username)
+        RuleFor(x => x.UserName)
             .NotNull()
             .NotEmpty()
             .WithMessage("User name cannot be empty or null.")

@@ -98,15 +98,11 @@ public class UnitOfWork<TContext> : IUnitOfWork<TContext> where TContext : DbCon
 
     public bool SaveChanges()
     {
-        StartNewTransactionIfNeeded();
-
         return _dbContext.SaveChanges() > 0;
     }
 
     public async Task<bool> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        StartNewTransactionIfNeeded();
-
         return (await _dbContext.SaveChangesAsync(cancellationToken)) > 0;
     }
 

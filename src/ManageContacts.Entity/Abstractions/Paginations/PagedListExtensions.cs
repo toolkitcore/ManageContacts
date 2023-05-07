@@ -40,4 +40,12 @@ public static class PagedListExtensions
 
         return new PagedList<TEntity>(pageIndex, pageSize, indexFrom, totalCount, totalPages, items);
     }
+    
+    public static bool NotNullOrEmpty<T>(this IPagedList<T> list)
+    {
+        if (list == null || list.Items == null)
+            return false;
+
+        return true;
+    }
 }
