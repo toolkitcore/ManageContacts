@@ -185,8 +185,7 @@ public class UserService : BaseService ,IUserService
     {
         var user = await _userRepository.GetAsync(
             predicate: r => r.Id == userId && r.Deleted,
-            cancellationToken: cancellationToken,
-            disableTracking: true
+            cancellationToken: cancellationToken
         ).ConfigureAwait(false);
         
         if (user == null)

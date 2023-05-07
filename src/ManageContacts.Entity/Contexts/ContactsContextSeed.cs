@@ -76,8 +76,8 @@ public static class ContactsContextSeed
         {
             Id = Guid.NewGuid(),
             UserName = "manager",
-            PasswordSalt = passwordSaltAdmin,
-            PasswordHashed = CryptoHelper.Encrypt("manager", passwordSaltAdmin),
+            PasswordSalt = passwordSaltManager,
+            PasswordHashed = CryptoHelper.Encrypt("manager", passwordSaltManager),
             Email = "manager.contacts@gmail.com",
             FirstName = "Manager",
             LastName = "App",

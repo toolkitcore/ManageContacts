@@ -24,4 +24,11 @@
       <ProjectReference Include="..\ManageContacts.Shared\ManageContacts.Shared.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Services\AddressTypes" />
+      <Folder Include="Services\EmailTypes" />
+      <Folder Include="Services\PhoneTypes" />
+      <Folder Include="Services\RelativeTypes" />
+    </ItemGroup>
+
 </Project>
