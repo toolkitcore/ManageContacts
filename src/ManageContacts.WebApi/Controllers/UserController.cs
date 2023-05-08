@@ -14,7 +14,7 @@ public class UserController : BaseController
     private readonly IUserService _userService;
     public UserController(ILogger<UserController> logger, IUserService userService) : base(logger)
     {
-        _userService = userService ?? throw new ArgumentNullException(nameof(UserService));
+        _userService = userService ?? throw new ArgumentNullException(nameof(userService));
     }
     
     #region [ADMIN PRIVATE API]

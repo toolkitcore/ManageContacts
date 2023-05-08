@@ -1,6 +1,6 @@
-namespace ManageContacts.Model.Models.RelativeTypes;
+namespace ManageContacts.Model.Models.EmailTypes;
 
-public class RelativeTypeModel
+public class EmailTypeModel
 {
     public Guid Id { get; set; }
     public string TypeName { get; set; }
