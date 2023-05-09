@@ -47,9 +47,5 @@ public class UserEditValidator : AbstractValidator<UserEditModel>
         RuleFor(x => x.Avatar)
             .Must(path => string.IsNullOrEmpty(path) || File.Exists(path))
             .WithMessage("Url avatar is invalid.");
-
-        RuleFor(x => x.ListRoleId)
-            .Must(rid => (rid == null || !rid.NotNullOrEmpty()) || rid.HasDuplicated(i => i))
-            .WithMessage("Duplicate role id list");
     }
 }

@@ -58,17 +58,19 @@ public class UserService : BaseService ,IUserService
         return new OkResponseModel<PaginationList<UserModel>>(new PaginationList<UserModel>());
     }
 
-    public async Task<OkResponseModel<UserModel>> GetAsync(Guid userId, CancellationToken cancellationToken = default)
+    public async Task<OkResponseModel<UserProfileModel>> GetAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         var user = await _userRepository.GetAsync(
-                predicate: u => u.Id == userId && !u.Deleted,
-                cancellationToken: cancellationToken
-                ).ConfigureAwait(false);
+            predicate: u => u.Id == userId && !u.Deleted,
+            include: u => u.Include(x => x.UserRoles)
+                .ThenInclude(ur => ur.Role),
+            cancellationToken: cancellationToken
+        ).ConfigureAwait(false);
         
         if (user == null)
             throw new BadRequestException("The request is invalid.");
 
-        return new OkResponseModel<UserModel>(_mapper.Map<UserModel>(user));
+        return new OkResponseModel<UserProfileModel>(_mapper.Map<UserProfileModel>(user));
     }
 
     public async Task<BaseResponseModel> CreateAsync(UserEditModel userEdit, CancellationToken cancellationToken = default)
@@ -91,10 +93,6 @@ public class UserService : BaseService ,IUserService
         var userNew = _mapper.Map<User>(userEdit);
         userNew.CreatorId = _currentUserId;
         userNew.Avatar = targetPath;
-        userNew.UserRoles = userEdit.ListRoleId?.Select(r => new UserRole()
-        {
-            RoleId = r
-        }).ToList() ?? default!;
 
         await _userRepository.InsertAsync(userNew, cancellationToken).ConfigureAwait(false);
         await _uow.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -157,11 +155,7 @@ public class UserService : BaseService ,IUserService
         user.PhoneNumber = userEdit.PhoneNumber;
         user.ModifierId = _currentUserId;
         user.Avatar = targetPath;
-        user.UserRoles = userEdit.ListRoleId?.Select(r => new UserRole()
-        {
-            RoleId = r
-        }).ToList() ?? default!;
-        
+
         _userRepository.Update(user);
         await _uow.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         _memoryCache.Remove($"user_roles_{userId}");

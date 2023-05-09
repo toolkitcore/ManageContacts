@@ -23,10 +23,8 @@ public class UserProfile : Profile
         CreateMap<UserEditModel, User>()
             .AfterMap((src, dest) =>
             {
-                dest.UserRoles = src.ListRoleId?.Select(ur => new UserRole()
-                {
-                    RoleId = ur
-                }).ToList() ?? default!;
+                dest.PasswordSalt = CryptoHelper.GenerateKey();
+                dest.PasswordHashed = CryptoHelper.Encrypt(src.Password, dest.PasswordSalt);
             });
         
         CreateMap<User, UserProfileModel>()

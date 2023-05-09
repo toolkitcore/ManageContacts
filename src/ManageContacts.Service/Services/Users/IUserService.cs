@@ -10,7 +10,7 @@ public interface IUserService
     Task<OkResponseModel<PaginationList<UserModel>>> GetAllAsync(UserFilterRequestModel filter,
         CancellationToken cancellationToken = default);
 
-    Task<OkResponseModel<UserModel>> GetAsync(Guid userId, CancellationToken cancellationToken = default);
+    Task<OkResponseModel<UserProfileModel>> GetAsync(Guid userId, CancellationToken cancellationToken = default);
 
     Task<BaseResponseModel> CreateAsync(UserEditModel userEdit, CancellationToken cancellationToken = default);
 

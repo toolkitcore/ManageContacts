@@ -15,7 +15,5 @@ public class UserEditModel
     public string PhoneNumber { get; set; }
     
     public string? Avatar { get; set; }
-    
-    public List<Guid>? ListRoleId { get; set; }
 
 }
