@@ -91,6 +91,10 @@ public class UserService : BaseService ,IUserService
         var userNew = _mapper.Map<User>(userEdit);
         userNew.CreatorId = _currentUserId;
         userNew.Avatar = targetPath;
+        userNew.UserRoles = userEdit.ListRoleId?.Select(r => new UserRole()
+        {
+            RoleId = r
+        }).ToList() ?? default!;
 
         await _userRepository.InsertAsync(userNew, cancellationToken).ConfigureAwait(false);
         await _uow.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -142,12 +146,23 @@ public class UserService : BaseService ,IUserService
                 user.Avatar.DeleteFile();
             }
         }
+
+        user.UserName = userEdit.UserName;
+        user.PasswordHashed = string.IsNullOrEmpty(userEdit.Password) 
+            ? user.PasswordHashed 
+            : CryptoHelper.Encrypt(userEdit.Password, user.PasswordSalt);
+        user.FirstName = userEdit.FirstName;
+        user.LastName = userEdit.LastName;
+        user.Email = userEdit.Email;
+        user.PhoneNumber = userEdit.PhoneNumber;
+        user.ModifierId = _currentUserId;
+        user.Avatar = targetPath;
+        user.UserRoles = userEdit.ListRoleId?.Select(r => new UserRole()
+        {
+            RoleId = r
+        }).ToList() ?? default!;
         
-        var userUpdate = _mapper.Map<User>(userEdit);
-        userUpdate.ModifierId = _currentUserId;
-        userUpdate.Avatar = targetPath;
-        
-        _userRepository.Update(userUpdate);
+        _userRepository.Update(user);
         await _uow.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         _memoryCache.Remove($"user_roles_{userId}");
         

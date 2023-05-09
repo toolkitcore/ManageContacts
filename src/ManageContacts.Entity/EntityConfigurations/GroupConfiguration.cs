@@ -13,7 +13,7 @@ public class GroupConfiguration : IEntityTypeConfiguration<Group>
         
         builder.HasOne(u => u.User)
             .WithMany(u => u.Groups)
-            .HasForeignKey(u => u.UserId)
+            .HasForeignKey(u => u.CreatorId)
             .IsRequired(false)
             .OnDelete(DeleteBehavior.Cascade);;
 

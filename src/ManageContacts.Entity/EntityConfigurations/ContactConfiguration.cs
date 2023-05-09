@@ -13,7 +13,7 @@ public class ContactConfiguration : IEntityTypeConfiguration<Contact>
 
         builder.HasOne(u => u.User)
             .WithMany(u => u.Contacts)
-            .HasForeignKey(u => u.UserId)
+            .HasForeignKey(u => u.CreatorId)
             .IsRequired()
             .OnDelete(DeleteBehavior.NoAction);
         

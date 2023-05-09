@@ -31,10 +31,16 @@ public class UserEditValidator : AbstractValidator<UserEditModel>
             .WithMessage("User name must be at least 6 characters.");
         
         RuleFor(u => u.Email)
-            .EmailAddress(FluentValidation.Validators.EmailValidationMode.AspNetCoreCompatible)
+            .EmailAddress()
             .WithMessage("The email is invalid.");
 
-        RuleFor(x => x.Password).NotPassword();
+        RuleFor(x => x.Password)
+            .Cascade(CascadeMode.StopOnFirstFailure)
+            .NotEmpty().When(x => !string.IsNullOrEmpty(x.Password)) // Kiểm tra password không được rỗng khi nó không phải là null hoặc rỗng
+            .MinimumLength(8).When(x => !string.IsNullOrEmpty(x.Password)) // Kiểm tra độ dài password tối thiểu khi nó không phải là null hoặc rỗng
+            .MaximumLength(50).When(x => !string.IsNullOrEmpty(x.Password)) // Kiểm tra độ dài password tối đa khi nó không phải là null hoặc rỗng
+            .Matches(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,50}$").When(x => !string.IsNullOrEmpty(x.Password)) // Kiểm tra password theo định dạng
+            .WithMessage("Password is not valid.");
         
         RuleFor(x => x.PhoneNumber).NotPhone();
         

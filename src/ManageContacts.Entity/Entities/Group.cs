@@ -4,7 +4,7 @@ using ManageContacts.Entity.Abstractions.Audits;
 
 namespace ManageContacts.Entity.Entities;
 
-public class Group 
+public class Group : AuditEntity
 {   
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -16,14 +16,6 @@ public class Group
     
     public string? Description { get; set; }
 
-    #region [AUDIT PROPERTIES]
-    public bool Deleted { get; set; }
-    public DateTime CreatedTime { get; set; }
-    
-    public Guid? UserId { get; set; }
-
-    #endregion [AUDIT PROPERTIES]
-    
     #region [REFERENCE PROPERTIES]
     public virtual User User { get; set; }
     public ICollection<Contact> Contacts { get; set; }
