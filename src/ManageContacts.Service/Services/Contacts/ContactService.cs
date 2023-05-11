@@ -9,9 +9,11 @@ using ManageContacts.Model.Abstractions.Requests;
 using ManageContacts.Model.Abstractions.Responses;
 using ManageContacts.Model.Models.Contacts;
 using ManageContacts.Service.Abstractions.Core;
+using ManageContacts.Shared.Exceptions;
 using ManageContacts.Shared.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace ManageContacts.Service.Services.Contacts;
@@ -47,7 +49,21 @@ public class ContactService : BaseService, IContactService
 
     public async Task<OkResponseModel<ContactModel>> GetAsync(Guid contactId, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var contact = await _contactRepository.GetAsync(
+            predicate: c => c.Id == contactId && !c.Deleted,
+            include: c => c.Include(i => i.Group)
+                .Include(i => i.Company)
+                .Include(i => i.PhoneNumbers)
+                .Include(i => i.EmailAddresses)
+                .Include(i => i.Addresses)
+                .Include(i => i.Relatives),
+            cancellationToken: cancellationToken
+            ).ConfigureAwait(false);
+
+        if (contact == null)
+            throw new BadRequestException("The request is invalid.");
+
+        return new OkResponseModel<ContactModel>(_mapper.Map<ContactModel>(contact));
     }
 
     public async Task<BaseResponseModel> CreateAsync(ContactEditModel contactEdit, CancellationToken cancellationToken = default)
