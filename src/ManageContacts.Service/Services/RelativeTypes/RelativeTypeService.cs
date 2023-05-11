@@ -3,6 +3,7 @@ using ManageContacts.Entity.Contexts;
 using ManageContacts.Entity.Entities;
 using ManageContacts.Infrastructure.Abstractions;
 using ManageContacts.Infrastructure.UnitOfWork;
+using ManageContacts.Model.Abstractions.Paginations;
 using ManageContacts.Model.Abstractions.Responses;
 using ManageContacts.Model.Models.RelativeTypes;
 using ManageContacts.Shared.Extensions;
@@ -20,14 +21,14 @@ public class RelativeTypeService : IRelativeTypeService
         _addressTypeRepository = uow.GetRepository<RelativeType>();
     }
     
-    public async Task<OkResponseModel<RelativeTypeModel>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<OkResponseModel<IEnumerable<RelativeTypeModel>>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         var relativeTypes = await _addressTypeRepository.FindAllAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
         
         if(relativeTypes.NotNullOrEmpty())
-            return new OkResponseModel<RelativeTypeModel>(_mapper.Map<RelativeTypeModel>(relativeTypes));
+            return new OkResponseModel<IEnumerable<RelativeTypeModel>>(_mapper.Map<IEnumerable<RelativeTypeModel>>(relativeTypes));
 
-        return new OkResponseModel<RelativeTypeModel>();
+        return new OkResponseModel<IEnumerable<RelativeTypeModel>>();
         
     }
 }

@@ -2,6 +2,10 @@ using System.Reflection;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using ManageContacts.Service.CacheServices.RoleCaches;
+using ManageContacts.Service.Services.AddressTypes;
+using ManageContacts.Service.Services.EmailTypes;
+using ManageContacts.Service.Services.PhoneTypes;
+using ManageContacts.Service.Services.RelativeTypes;
 using ManageContacts.Service.Services.Roles;
 using ManageContacts.Service.Services.UploadFiles;
 using ManageContacts.Service.Services.Users;
@@ -40,7 +44,15 @@ public static class ServiceExtensions
         services.AddScoped<IUserService, UserService>();
         
         services.AddScoped<IRoleService, RoleService>();
-        
+
+        services.AddScoped<IEmailTypeService, EmailTypeService>();
+
+        services.AddScoped<IPhoneTypeService, PhoneTypeService>();
+
+        services.AddScoped<IRelativeTypeService, RelativeTypeService>();
+
+        services.AddScoped<IAddressTypeService, AddressTypeService>();
+
         return services;
     }
 }

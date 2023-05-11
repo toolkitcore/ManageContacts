@@ -2,14 +2,14 @@ using AutoMapper;
 using ManageContacts.Entity.Abstractions.Paginations;
 using ManageContacts.Entity.Entities;
 using ManageContacts.Model.Abstractions.Paginations;
-using ManageContacts.Model.Models.RelativeTypes;
+using ManageContacts.Model.Models.EmailTypes;
 
 namespace ManageContacts.Service.Mapping;
 
-public class RelativeTypeProfile : Profile
+public class EmailTypeProfile : Profile
 {
-    public RelativeTypeProfile()
+    public EmailTypeProfile()
     {
-        CreateMap<RelativeType, RelativeTypeModel>();
+        CreateMap<EmailType, EmailTypeModel>();
     }
 }
