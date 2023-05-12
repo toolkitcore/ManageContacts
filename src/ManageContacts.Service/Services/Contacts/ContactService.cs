@@ -66,14 +66,129 @@ public class ContactService : BaseService, IContactService
         return new OkResponseModel<ContactModel>(_mapper.Map<ContactModel>(contact));
     }
 
+    public async Task<OkResponseModel<IEnumerable<ContactModel>>> GetAllByGroupIdAsync(Guid groupId, CancellationToken cancellationToken = default)
+    {
+        var group = await _groupRepository.GetAsync(
+            predicate: g => g.Id == groupId && !g.Deleted,
+            include: g => g.Include(i => i.Contacts),
+            orderBy: u => u.OrderByDescending(x => x.CreatedTime),
+            cancellationToken: cancellationToken
+        ).ConfigureAwait(false);
+
+        if (group == null)
+            throw new BadRequestException("The request is invalid.");
+
+        if(group.Contacts.NotNullOrEmpty())
+            return new OkResponseModel<IEnumerable<ContactModel>>(_mapper.Map<IEnumerable<ContactModel>>(group.Contacts));
+        
+        return new OkResponseModel<IEnumerable<ContactModel>>(new List<ContactModel>());
+
+    }
+
     public async Task<BaseResponseModel> CreateAsync(ContactEditModel contactEdit, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var existContact = await _contactRepository.GetAsync(
+            predicate: c => (c.FirstName == contactEdit.FirstName || c.LastName == contactEdit.LastName || c.NickName == contactEdit.NickName) && !c.Deleted,
+            cancellationToken: cancellationToken
+        ).ConfigureAwait(false);
+
+        if (existContact != null)
+            throw new BadRequestException("The contact is already exists.");
+
+        var newContact = _mapper.Map<Contact>(contactEdit);
+        newContact.CreatorId = _currentUserId;
+        await _contactRepository.InsertAsync(newContact, cancellationToken).ConfigureAwait(false);
+        await _uow.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+        return new BaseResponseModel("Create contact successful.");
     }
 
     public async Task<BaseResponseModel> UpdateAsync(Guid contactId, ContactEditModel contactEdit, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var contact = await _contactRepository.GetAsync(
+            predicate: c => c.Id == contactId && !c.Deleted,
+            include: c => c.Include(i => i.Group)
+                .Include(i => i.Company)
+                .Include(i => i.PhoneNumbers)
+                .Include(i => i.EmailAddresses)
+                .Include(i => i.Addresses)
+                .Include(i => i.Relatives),
+            cancellationToken: cancellationToken
+        ).ConfigureAwait(false);
+
+        if (contact == null)
+            throw new BadRequestException("The request is invalid.");
+        
+        var existContact = await _contactRepository.GetAsync(
+            predicate: c => (c.FirstName == contactEdit.FirstName || c.LastName == contactEdit.LastName || c.NickName == contactEdit.NickName) 
+                            && !c.Deleted 
+                            && c.Id != contactId,
+            cancellationToken: cancellationToken
+        ).ConfigureAwait(false);
+        
+        if (existContact != null)
+            throw new BadRequestException("The contact is already exists.");
+
+        contact.FirstName = contactEdit.FirstName;
+        contact.LastName = contactEdit.LastName;
+        contact.NickName = contactEdit.NickName;
+        contact.Birthday = contactEdit.Birthday;
+        contact.Note = contactEdit.Note;
+        
+        if(contact.PhoneNumbers.NotNullOrEmpty())
+            foreach (var phone in contact.PhoneNumbers)
+            {
+                var phoneNumber = contact.PhoneNumbers.FirstOrDefault(p => p.Id == phone.Id);
+                if (phoneNumber != null)
+                {
+                    phoneNumber.Phone = phone.Phone;
+                    phoneNumber.Type = phone.Type;
+                    phoneNumber.FormattedType = phone.FormattedType;
+                    phoneNumber.PhoneTypeId = phone.PhoneTypeId;
+                }
+                else
+                {
+                    var newPhoneNumber = new PhoneNumber
+                    {
+                        Phone = phone.Phone,
+                        Type = phone.Type,
+                        FormattedType = phone.FormattedType,
+                        PhoneTypeId = phone.PhoneTypeId,
+                        ContactId = contact.Id
+                    };
+
+                    contact.PhoneNumbers.Add(newPhoneNumber);
+                }
+            }
+        
+        if(contact.EmailAddresses.NotNullOrEmpty())
+            foreach (var emailAddress in contact.EmailAddresses)
+            {
+                var email = contact.EmailAddresses.FirstOrDefault(p => p.Id == emailAddress.Id);
+                if (email != null)
+                {
+                    email.Email = emailAddress.Email;
+                    email.Type = emailAddress.Type;
+                    email.FormattedType = emailAddress.FormattedType;
+                    email.EmailTypeId = emailAddress.EmailTypeId;
+                }
+                else
+                {
+                    var newEmailAddress = new EmailAddress()
+                    {
+                        Email = emailAddress.Email,
+                        Type = emailAddress.Type,
+                        FormattedType = emailAddress.FormattedType,
+                        EmailTypeId = emailAddress.EmailTypeId,
+                        ContactId = contact.Id
+                    };
+
+                    contact.EmailAddresses.Add(newEmailAddress);
+                }
+            }
+
+        return new BaseResponseModel("Update contact successful.");
+
     }
 
     public async Task<BaseResponseModel> DeleteAsync(Guid contactId, CancellationToken cancellationToken = default)

@@ -32,7 +32,7 @@ public class GroupService : BaseService, IGroupService
             predicate: g => (string.IsNullOrEmpty(filter.SearchString) || (!string.IsNullOrEmpty(filter.SearchString) && g.Name.Contains(filter.SearchString))) && !g.Deleted,
             cancellationToken: cancellationToken
         ).ConfigureAwait(false);
-
+        
         if (groups.NotNullOrEmpty())
             return new OkResponseModel<PaginationList<GroupModel>>(_mapper.Map<PaginationList<GroupModel>>(groups));
         
@@ -63,6 +63,7 @@ public class GroupService : BaseService, IGroupService
             throw new BadRequestException("Group with the same name already exists.");
 
         var newGroup = _mapper.Map<Group>(groupEdit);
+        newGroup.CreatorId = _currentUserId;
         await _groupRepository.InsertAsync(newGroup, cancellationToken).ConfigureAwait(false);
         await _uow.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
@@ -72,7 +73,7 @@ public class GroupService : BaseService, IGroupService
     public async Task<BaseResponseModel> UpdateAsync(Guid groupId, GroupEditModel groupEdit, CancellationToken cancellationToken = default)
     {
         var group = await _groupRepository.GetAsync(
-            predicate: g =>g.Id == groupId,
+            predicate: g =>g.Id == groupId && !g.Deleted,
             cancellationToken: cancellationToken
             ).ConfigureAwait(false);
 
