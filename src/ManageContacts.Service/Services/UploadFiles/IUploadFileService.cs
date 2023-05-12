@@ -1,5 +1,5 @@
 ﻿using ManageContacts.Model.Abstractions.Responses;
-using ManageContacts.Model.Files;
+using ManageContacts.Model.Models.Files;
 using Microsoft.AspNetCore.Http;
 
 namespace ManageContacts.Service.Services.UploadFiles;

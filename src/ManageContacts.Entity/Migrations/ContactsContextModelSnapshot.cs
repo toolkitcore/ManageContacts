@@ -168,7 +168,7 @@ namespace ManageContacts.Entity.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<Guid>("GroupId")
+                    b.Property<Guid?>("GroupId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("LastName")
@@ -670,8 +670,7 @@ namespace ManageContacts.Entity.Migrations
                     b.HasOne("ManageContacts.Entity.Entities.Group", "Group")
                         .WithMany("Contacts")
                         .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Group");
 

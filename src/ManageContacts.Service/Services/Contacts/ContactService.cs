@@ -34,7 +34,7 @@ public class ContactService : BaseService, IContactService
     public async Task<OkResponseModel<PaginationList<ContactModel>>> GetAllAsync(ContactFilterRequestModel filter, CancellationToken cancellationToken = default)
     {
         var contacts = await _contactRepository.PagingAllAsync(
-            predicate: c => (string.IsNullOrEmpty(filter.SearchString) || (!string.IsNullOrEmpty(filter.SearchString) && c.LastName.Contains(filter.SearchString))),
+            predicate: c => (string.IsNullOrEmpty(filter.SearchString) || (!string.IsNullOrEmpty(filter.SearchString) && c.LastName.Contains(filter.SearchString))) && !c.Deleted,
             orderBy: sortFields.GetSortType(filter.GetSortType()),
             pageIndex: filter.PageIndex,
             pageSize: filter.PageSize,

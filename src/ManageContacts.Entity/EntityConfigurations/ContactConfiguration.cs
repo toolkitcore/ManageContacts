@@ -20,8 +20,8 @@ public class ContactConfiguration : IEntityTypeConfiguration<Contact>
         builder.HasOne(c => c.Group)
             .WithMany(g => g.Contacts)
             .HasForeignKey(c => c.GroupId)
-            .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasOne(c => c.Company)
             .WithOne(c => c.Contact)

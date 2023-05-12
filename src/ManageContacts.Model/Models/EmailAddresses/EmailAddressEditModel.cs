@@ -1,8 +1,6 @@
-using Newtonsoft.Json;
-
 namespace ManageContacts.Model.Models.EmailAddresses;
 
-public class EmailAddressModel
+public class EmailAddressEditModel
 {
     public Guid Id { get; set; }
     public string Email { get; set; }

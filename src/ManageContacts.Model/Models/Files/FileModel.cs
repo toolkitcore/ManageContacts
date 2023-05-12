@@ -1,4 +1,4 @@
-﻿namespace ManageContacts.Model.Files;
+namespace ManageContacts.Model.Models.Files;
 
 public class FileModel
 {

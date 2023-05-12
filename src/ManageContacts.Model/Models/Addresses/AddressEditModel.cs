@@ -1,10 +1,6 @@
-using ManageContacts.Model.Models.AddressTypes;
-using ManageContacts.Model.Models.Contacts;
-using Newtonsoft.Json;
-
 namespace ManageContacts.Model.Models.Addresses;
 
-public class AddressModel
+public class AddressEditModel
 {
     public Guid Id { get; set; }
     public string Province { get; set; }

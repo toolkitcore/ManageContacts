@@ -26,7 +26,7 @@ public class Contact : AuditEntity
     
     [StringLength(1000)]
     public string? Note { get; set; }
-    public Guid GroupId { get; set; }
+    public Guid? GroupId { get; set; }
 
     #region [REFERENCE PROPERTIES]
     public virtual User User { get; set; }

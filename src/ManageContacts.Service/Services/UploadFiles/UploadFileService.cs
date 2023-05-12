@@ -1,5 +1,5 @@
 ﻿using ManageContacts.Model.Abstractions.Responses;
-using ManageContacts.Model.Files;
+using ManageContacts.Model.Models.Files;
 using ManageContacts.Shared.Exceptions;
 using ManageContacts.Shared.Extensions;
 using Microsoft.AspNetCore.Hosting;

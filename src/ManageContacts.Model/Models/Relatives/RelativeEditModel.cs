@@ -1,10 +1,6 @@
-using ManageContacts.Model.Models.Contacts;
-using ManageContacts.Model.Models.PhoneTypes;
-using Newtonsoft.Json;
+namespace ManageContacts.Model.Models.Relatives;
 
-namespace ManageContacts.Model.Models.PhoneNumbers;
-
-public class PhoneNumberModel
+public class RelativeEditModel
 {
     public Guid Id { get; set; }
     public string Phone { get; set; }
