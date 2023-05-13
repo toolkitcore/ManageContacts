@@ -2,6 +2,8 @@ using System.Reflection;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using ManageContacts.Service.CacheServices.RoleCaches;
+using ManageContacts.Service.Services.Contacts;
+using ManageContacts.Service.Services.Groups;
 using ManageContacts.Service.Services.PhoneTypes;
 using ManageContacts.Service.Services.Roles;
 using ManageContacts.Service.Services.UploadFiles;
@@ -43,6 +45,10 @@ public static class ServiceExtensions
         services.AddScoped<IRoleService, RoleService>();
 
         services.AddScoped<IPhoneTypeService, PhoneTypeService>();
+        
+        services.AddScoped<IGroupService, GroupService>();
+        
+        services.AddScoped<IContactService, ContactService>();
 
         return services;
     }

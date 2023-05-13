@@ -16,7 +16,7 @@ public class GroupController : BaseController
     [HttpGet]
     [Route("api/groups")]
     [Authorized]
-    public async Task<IActionResult> GetAllAsync(GroupFilterRequestModel filter, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetAllAsync([FromQuery]GroupFilterRequestModel filter, CancellationToken cancellationToken = default)
         => Ok(await _groupService.GetAllAsync(filter, cancellationToken).ConfigureAwait(false));
 
     [HttpGet]
@@ -44,5 +44,4 @@ public class GroupController : BaseController
         [FromQuery(Name = "delete_contacts")] bool deleteGroupContacts = false,
         CancellationToken cancellationToken = default)
         => Ok(await _groupService.DeleteAsync(groupId, deleteGroupContacts, cancellationToken).ConfigureAwait(false));
-
 }

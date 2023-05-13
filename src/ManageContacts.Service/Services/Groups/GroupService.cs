@@ -20,7 +20,7 @@ public class GroupService : BaseService, IGroupService
 {
     private readonly IRepository<Group> _groupRepository;
     private readonly IRepository<Contact> _contactRepository;
-    public GroupService(IUnitOfWork<ContactsContext> uow, IHttpContextAccessor httpContextAccessor, IMapper mapper, ILogger logger, IWebHostEnvironment env) : base(uow, httpContextAccessor, mapper, logger, env)
+    public GroupService(IUnitOfWork<ContactsContext> uow, IHttpContextAccessor httpContextAccessor, IMapper mapper, ILogger<GroupService> logger, IWebHostEnvironment env) : base(uow, httpContextAccessor, mapper, logger, env)
     {
         _groupRepository = uow.GetRepository<Group>();
         _contactRepository = uow.GetRepository<Contact>();
@@ -29,7 +29,9 @@ public class GroupService : BaseService, IGroupService
     public async Task<OkResponseModel<PaginationList<GroupModel>>> GetAllAsync(GroupFilterRequestModel filter, CancellationToken cancellationToken = default)
     {
         var groups = await _groupRepository.PagingAllAsync(
-            predicate: g => (string.IsNullOrEmpty(filter.SearchString) || (!string.IsNullOrEmpty(filter.SearchString) && g.Name.Contains(filter.SearchString))) && !g.Deleted,
+            predicate: g => (string.IsNullOrEmpty(filter.SearchString) || (!string.IsNullOrEmpty(filter.SearchString) && g.Name.Contains(filter.SearchString))) 
+                            && !g.Deleted
+                            && g.User.Id == _currentUserId,
             cancellationToken: cancellationToken
         ).ConfigureAwait(false);
         
@@ -42,7 +44,7 @@ public class GroupService : BaseService, IGroupService
     public async Task<OkResponseModel<GroupModel>> GetAsync(Guid groupId, CancellationToken cancellationToken = default)
     {
         var group = await _groupRepository.GetAsync(
-            predicate: g => g.Id == groupId && !g.Deleted,
+            predicate: g => g.Id == groupId && !g.Deleted && g.User.Id == _currentUserId,
             cancellationToken: cancellationToken
         ).ConfigureAwait(false);
 
@@ -55,7 +57,7 @@ public class GroupService : BaseService, IGroupService
     public async Task<BaseResponseModel> CreateAsync(GroupEditModel groupEdit, CancellationToken cancellationToken = default)
     {
         var existGroup = await _groupRepository.GetAsync(
-            predicate: g => g.Name == groupEdit.Name && !g.Deleted,
+            predicate: g => g.Name == groupEdit.Name && !g.Deleted && g.User.Id == _currentUserId,
             cancellationToken: cancellationToken
             ).ConfigureAwait(false);
 
@@ -73,7 +75,7 @@ public class GroupService : BaseService, IGroupService
     public async Task<BaseResponseModel> UpdateAsync(Guid groupId, GroupEditModel groupEdit, CancellationToken cancellationToken = default)
     {
         var group = await _groupRepository.GetAsync(
-            predicate: g =>g.Id == groupId && !g.Deleted,
+            predicate: g =>g.Id == groupId && !g.Deleted && g.User.Id == _currentUserId,
             cancellationToken: cancellationToken
             ).ConfigureAwait(false);
 
@@ -81,7 +83,7 @@ public class GroupService : BaseService, IGroupService
             throw new BadRequestException("The request is invalid.");
         
         var existGroup = await _groupRepository.GetAsync(
-            predicate: g => g.Name == groupEdit.Name && !g.Deleted && g.Id != groupId,
+            predicate: g => g.Name == groupEdit.Name && !g.Deleted && g.Id != groupId && g.User.Id == _currentUserId,
             cancellationToken: cancellationToken
         ).ConfigureAwait(false);
         
@@ -100,7 +102,7 @@ public class GroupService : BaseService, IGroupService
     public async Task<BaseResponseModel> DeleteAsync(Guid groupId, bool deleteGroupContacts = false, CancellationToken cancellationToken = default)
     {
         var group = await _groupRepository.GetAsync(
-            predicate: g =>g.Id == groupId,
+            predicate: g =>g.Id == groupId && !g.Deleted && g.User.Id == _currentUserId,
             cancellationToken: cancellationToken
         ).ConfigureAwait(false);
 
@@ -128,7 +130,7 @@ public class GroupService : BaseService, IGroupService
         }
         
         _groupRepository.Delete(group);
-        await _uow.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await _uow.CommitAsync(cancellationToken).ConfigureAwait(false);
         
         return new BaseResponseModel("Delete group contact successful.");
     }

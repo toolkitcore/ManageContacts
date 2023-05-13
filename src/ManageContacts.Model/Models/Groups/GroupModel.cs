@@ -11,7 +11,4 @@ public class GroupModel
     public string? Description { get; set; }
     public bool Deleted { get; set; }
     public DateTime CreatedTime { get; set; }
-    public Guid? UserId { get; set; }
-    public UserModel User { get; set; }
-    public IEnumerable<ContactModel> Contacts { get; set; }
 }

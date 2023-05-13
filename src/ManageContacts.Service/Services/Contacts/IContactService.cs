@@ -14,5 +14,6 @@ public interface IContactService
     Task<BaseResponseModel> CreateAsync(ContactEditModel contactEdit, CancellationToken cancellationToken = default);
     Task<BaseResponseModel> UpdateAsync(Guid contactId, ContactEditModel contactEdit, CancellationToken cancellationToken = default);
     Task<BaseResponseModel> DeleteAsync(Guid contactId, CancellationToken cancellationToken = default);
+    Task<BaseResponseModel> RecoverAsync(Guid contactId, CancellationToken cancellationToken = default);
     
 }

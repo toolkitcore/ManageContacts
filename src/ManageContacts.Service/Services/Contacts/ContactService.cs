@@ -24,7 +24,7 @@ public class ContactService : BaseService, IContactService
     private readonly IRepository<Group> _groupRepository;
     private readonly IRepository<PhoneNumber> _phoneNumberRepository;
     private readonly IRepository<Company> _companyRepository;
-    public ContactService(IUnitOfWork<ContactsContext> uow, IHttpContextAccessor httpContextAccessor, IMapper mapper, ILogger logger, IWebHostEnvironment env)
+    public ContactService(IUnitOfWork<ContactsContext> uow, IHttpContextAccessor httpContextAccessor, IMapper mapper, ILogger<ContactService> logger, IWebHostEnvironment env)
         : base(uow, httpContextAccessor, mapper, logger, env)
     {
         _contactRepository = uow.GetRepository<Contact>();
@@ -36,7 +36,9 @@ public class ContactService : BaseService, IContactService
     public async Task<OkResponseModel<PaginationList<ContactModel>>> GetAllAsync(ContactFilterRequestModel filter, CancellationToken cancellationToken = default)
     {
         var contacts = await _contactRepository.PagingAllAsync(
-            predicate: c => (string.IsNullOrEmpty(filter.SearchString) || (!string.IsNullOrEmpty(filter.SearchString) && c.LastName.Contains(filter.SearchString))) && !c.Deleted,
+            predicate: c => (string.IsNullOrEmpty(filter.SearchString) || (!string.IsNullOrEmpty(filter.SearchString) && c.LastName.Contains(filter.SearchString))) 
+                            && !c.Deleted
+                            && c.User.Id == _currentUserId,
             orderBy: sortFields.GetSortType(filter.GetSortType()),
             pageIndex: filter.PageIndex,
             pageSize: filter.PageSize,
@@ -52,7 +54,7 @@ public class ContactService : BaseService, IContactService
     public async Task<OkResponseModel<ContactModel>> GetAsync(Guid contactId, CancellationToken cancellationToken = default)
     {
         var contact = await _contactRepository.GetAsync(
-            predicate: c => c.Id == contactId && !c.Deleted,
+            predicate: c => c.Id == contactId && !c.Deleted && c.User.Id == _currentUserId,
             include: c => c.Include(i => i.Group)
                 .Include(i => i.Company)
                 .Include(i => i.PhoneNumbers),
@@ -68,7 +70,7 @@ public class ContactService : BaseService, IContactService
     public async Task<OkResponseModel<IEnumerable<ContactModel>>> GetAllByGroupIdAsync(Guid groupId, CancellationToken cancellationToken = default)
     {
         var group = await _groupRepository.GetAsync(
-            predicate: g => g.Id == groupId && !g.Deleted,
+            predicate: g => g.Id == groupId && !g.Deleted && g.User.Id == _currentUserId,
             include: g => g.Include(i => i.Contacts),
             orderBy: u => u.OrderByDescending(x => x.CreatedTime),
             cancellationToken: cancellationToken
@@ -87,7 +89,9 @@ public class ContactService : BaseService, IContactService
     public async Task<BaseResponseModel> CreateAsync(ContactEditModel contactEdit, CancellationToken cancellationToken = default)
     {
         var existContact = await _contactRepository.GetAsync(
-            predicate: c => (c.FirstName == contactEdit.FirstName || c.LastName == contactEdit.LastName || c.NickName == contactEdit.NickName) && !c.Deleted,
+            predicate: c => (c.FirstName == contactEdit.FirstName || c.LastName == contactEdit.LastName || c.NickName == contactEdit.NickName) 
+                            && !c.Deleted
+                            && c.User.Id == _currentUserId,
             cancellationToken: cancellationToken
         ).ConfigureAwait(false);
 
@@ -133,30 +137,7 @@ public class ContactService : BaseService, IContactService
         contact.NickName = contactEdit.NickName;
         contact.Birthday = contactEdit.Birthday;
         contact.Note = contactEdit.Note;
-
-        if (contactEdit.Company != null)
-        {
-            if (contact.Company != null)
-            {
-                contact.Company.Name = contactEdit.Company.Name;
-                contact.Company.Description = contactEdit.Company.Description;
-            }
-            else
-            {
-                contact.Company = new Company()
-                {
-                    Name = contactEdit.Company.Name,
-                    Description = contactEdit.Company.Description
-                };
-            }
-        }
-        else
-        {
-            if (contact.Company != null)
-            {
-                _companyRepository.Delete(contact.Company);
-            }
-        }
+        
         
         foreach (var phone in contactEdit.PhoneNumbers)
         {
@@ -196,7 +177,12 @@ public class ContactService : BaseService, IContactService
     {
         throw new NotImplementedException();
     }
-    
+
+    public Task<BaseResponseModel> RecoverAsync(Guid contactId, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
     #region [PRIVATE FIELDS]
     private static readonly Dictionary<string, Func<IQueryable<Contact>, IOrderedQueryable<Contact>>> sortFields = new Dictionary<string, Func<IQueryable<Contact>, IOrderedQueryable<Contact>>>(StringComparer.OrdinalIgnoreCase)
     {

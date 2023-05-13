@@ -25,7 +25,7 @@ public class ContactConfiguration : IEntityTypeConfiguration<Contact>
 
         builder.HasOne(c => c.Company)
             .WithOne(c => c.Contact)
-            .HasForeignKey<Company>(c => c.Id)
+            .HasForeignKey<Company>(c => c.ContactId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(c => c.PhoneNumbers)

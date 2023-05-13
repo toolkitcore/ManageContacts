@@ -1,9 +1,6 @@
-using ManageContacts.Model.Models.Addresses;
 using ManageContacts.Model.Models.Companies;
-using ManageContacts.Model.Models.EmailAddresses;
 using ManageContacts.Model.Models.Groups;
 using ManageContacts.Model.Models.PhoneNumbers;
-using ManageContacts.Model.Models.Relatives;
 using ManageContacts.Model.Models.Users;
 using Newtonsoft.Json;
 
@@ -22,7 +19,4 @@ public class ContactModel
     public GroupModel Group { get; set; }
     public CompanyModel Company { get; set; }
     public IEnumerable<PhoneNumberModel> PhoneNumbers { get; set; }
-    public IEnumerable<EmailAddressModel> EmailAddresses { get; set; }
-    public IEnumerable<AddressModel> Addresses { get; set; }
-    public IEnumerable<RelativeModel> Relatives { get; set; }
 }

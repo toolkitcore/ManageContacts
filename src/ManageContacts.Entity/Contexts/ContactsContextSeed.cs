@@ -113,7 +113,6 @@ public static class ContactsContextSeed
 
     }
     
-    
     private static IEnumerable<PhoneType> GetPhoneTypes()
     {
         return new List<PhoneType>() 
@@ -123,5 +122,5 @@ public static class ContactsContextSeed
             new PhoneType() { TypeName = "Other", UnaccentedName = "other", Description = "Other." }
         };
     }
-
+    
 }
