@@ -19,7 +19,7 @@ public class ContactCleanupJob
     public void Run()
     {
         var contacts = _contactRepository.FindAll(
-            predicate: c => c.Deleted && (!c.DeletedTime.HasValue || c.DeletedTime.Value < DateTime.UtcNow.AddDays(-30)));
+            predicate: c => c.Deleted && (c.DeletedTime.HasValue && c.DeletedTime.Value < DateTime.UtcNow.AddDays(-30)));
         _contactRepository.BulkDelete(contacts.ToList());
     }
 }

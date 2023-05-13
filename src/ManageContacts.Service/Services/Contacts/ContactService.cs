@@ -56,7 +56,7 @@ public class ContactService : BaseService, IContactService
         var contacts = await _contactRepository.PagingAllAsync(
             predicate: c => (string.IsNullOrEmpty(filter.SearchString) || (!string.IsNullOrEmpty(filter.SearchString) && (c.FirstName.Contains(filter.SearchString) || c.LastName.Contains(filter.SearchString) || c.NickName.Contains(filter.SearchString)))) 
                             && c.Deleted
-                            && (!c.DeletedTime.HasValue || c.DeletedTime.Value > DateTime.UtcNow.AddDays(-30))
+                            && (c.DeletedTime.HasValue && c.DeletedTime.Value > DateTime.UtcNow.AddDays(-30))
                             && c.User.Id == _currentUserId,
             orderBy: sortFields.GetSortType(filter.GetSortType()),
             pageIndex: filter.PageIndex,
