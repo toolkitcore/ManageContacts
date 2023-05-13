@@ -1,4 +1,5 @@
 using System.Text;
+using Hangfire;
 using ManageContacts.Infrastructure;
 using ManageContacts.Service;
 using ManageContacts.Shared.Configurations;
@@ -59,6 +60,8 @@ public static class ServiceCollectionExtension
 
         services.AddService();
 
+        services.AddHangfire(configuration);
+        
         services.AddTransient<HandleExceptionMiddleware>();
         
         return services;
@@ -98,6 +101,18 @@ public static class ServiceCollectionExtension
                 }
             });
         });
+        return services;
+    }
+
+    private static IServiceCollection AddHangfire(this IServiceCollection services, IConfiguration configuration)
+    {
+        var databaseSetting = configuration.GetOptions<DatabaseSetting>();
+        services.AddHangfire(configuration => configuration
+            .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+            .UseSimpleAssemblyNameTypeSerializer()
+            .UseRecommendedSerializerSettings()
+            .UseSqlServerStorage(databaseSetting.Default));
+        
         return services;
     }
 }

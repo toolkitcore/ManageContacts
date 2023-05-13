@@ -20,6 +20,13 @@ public class ContactController : BaseController
         => Ok(await _contactService.GetAllAsync(filter, cancellationToken).ConfigureAwait(false));
     
     [HttpGet]
+    [Route("api/contacts/bin")]
+    [Authorized]
+    public async Task<IActionResult> GetAllBinAsync([FromQuery]ContactFilterRequestModel filter, CancellationToken cancellationToken = default)
+        => Ok(await _contactService.GetAllDeletedAsync(filter, cancellationToken).ConfigureAwait(false));
+
+    
+    [HttpGet]
     [Route("api/contacts/{id:guid}")]
     [Authorized]
     public async Task<IActionResult> GetAsync([FromRoute(Name = "id")]Guid contactId, CancellationToken cancellationToken = default)

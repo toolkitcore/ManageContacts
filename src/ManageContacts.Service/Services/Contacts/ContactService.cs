@@ -36,8 +36,27 @@ public class ContactService : BaseService, IContactService
     public async Task<OkResponseModel<PaginationList<ContactModel>>> GetAllAsync(ContactFilterRequestModel filter, CancellationToken cancellationToken = default)
     {
         var contacts = await _contactRepository.PagingAllAsync(
-            predicate: c => (string.IsNullOrEmpty(filter.SearchString) || (!string.IsNullOrEmpty(filter.SearchString) && c.LastName.Contains(filter.SearchString))) 
+            predicate: c => (string.IsNullOrEmpty(filter.SearchString) || (!string.IsNullOrEmpty(filter.SearchString) && (c.FirstName.Contains(filter.SearchString) || c.LastName.Contains(filter.SearchString) || c.NickName.Contains(filter.SearchString)))) 
                             && !c.Deleted
+                            && c.User.Id == _currentUserId,
+            orderBy: sortFields.GetSortType(filter.GetSortType()),
+            pageIndex: filter.PageIndex,
+            pageSize: filter.PageSize,
+            cancellationToken: cancellationToken
+        ).ConfigureAwait(false);
+        
+        if (contacts.NotNullOrEmpty())
+            return new OkResponseModel<PaginationList<ContactModel>>(_mapper.Map<PaginationList<ContactModel>>(contacts));
+
+        return new OkResponseModel<PaginationList<ContactModel>>(new PaginationList<ContactModel>());
+    }
+
+    public async Task<OkResponseModel<PaginationList<ContactModel>>> GetAllDeletedAsync(ContactFilterRequestModel filter, CancellationToken cancellationToken = default)
+    {
+        var contacts = await _contactRepository.PagingAllAsync(
+            predicate: c => (string.IsNullOrEmpty(filter.SearchString) || (!string.IsNullOrEmpty(filter.SearchString) && (c.FirstName.Contains(filter.SearchString) || c.LastName.Contains(filter.SearchString) || c.NickName.Contains(filter.SearchString)))) 
+                            && c.Deleted
+                            && (!c.DeletedTime.HasValue || c.DeletedTime.Value > DateTime.UtcNow.AddDays(-30))
                             && c.User.Id == _currentUserId,
             orderBy: sortFields.GetSortType(filter.GetSortType()),
             pageIndex: filter.PageIndex,
@@ -101,7 +120,16 @@ public class ContactService : BaseService, IContactService
         var newContact = _mapper.Map<Contact>(contactEdit);
         newContact.CreatorId = _currentUserId;
         await _contactRepository.InsertAsync(newContact, cancellationToken).ConfigureAwait(false);
-        await _uow.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+        try
+        {
+            await _uow.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw new InternalServerException("Create contact failure.");
+        }
 
         return new BaseResponseModel("Create contact successful.");
     }
@@ -137,7 +165,32 @@ public class ContactService : BaseService, IContactService
         contact.NickName = contactEdit.NickName;
         contact.Birthday = contactEdit.Birthday;
         contact.Note = contactEdit.Note;
-        
+        contact.GroupId = contactEdit.GroupId;
+        contact.Group = null;
+
+        if (contact.Company != null)
+        {
+            if (contactEdit.Company != null)
+            {
+                contact.Company.Name = contactEdit.Company.Name;
+                contact.Company.Description = contactEdit.Company.Description;
+            }
+            else
+            {
+                _companyRepository.Delete(contact.Company);
+            }
+        }
+        else
+        {
+            if (contactEdit.Company != null)
+            {
+                contact.Company = new Company()
+                {
+                    Name = contactEdit.Company.Name,
+                    Description = contactEdit.Company.Description,
+                };
+            }
+        }
         
         foreach (var phone in contactEdit.PhoneNumbers)
         {
@@ -165,9 +218,21 @@ public class ContactService : BaseService, IContactService
         }
         
         var phoneNumbersToDelete = contact.PhoneNumbers
-            .Where(p => !contactEdit.PhoneNumbers.Any(pu => pu.Id == p.Id)).ToList();
-        if(phoneNumbersToDelete.NotNullOrEmpty())
-            await _phoneNumberRepository.BulkDeleteAsync(phoneNumbersToDelete, cancellationToken).ConfigureAwait(false);
+            .Where(p => !contactEdit.PhoneNumbers.Any(pu => pu.Id == p.Id));
+        if (phoneNumbersToDelete.NotNullOrEmpty())
+            _phoneNumberRepository.Delete(phoneNumbersToDelete.ToList());
+
+        _contactRepository.Update(contact);
+        
+        try
+        {
+            await _uow.CommitAsync(cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw new InternalServerException("Update contact failure.");
+        }
         
         return new BaseResponseModel("Update contact successful.");
 
@@ -175,12 +240,39 @@ public class ContactService : BaseService, IContactService
 
     public async Task<BaseResponseModel> DeleteAsync(Guid contactId, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var contact = await _contactRepository.GetAsync(
+            predicate: c => c.Id == contactId && !c.Deleted,
+            cancellationToken: cancellationToken
+        ).ConfigureAwait(false);
+
+        if (contact == null)
+            throw new BadRequestException("The request is invalid.");
+        
+        _contactRepository.Delete(contact);
+        await _uow.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+        return new BaseResponseModel("Delete contact successful.");
     }
 
-    public Task<BaseResponseModel> RecoverAsync(Guid contactId, CancellationToken cancellationToken = default)
+    public async Task<BaseResponseModel> RecoverAsync(Guid contactId, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var contact = await _contactRepository.GetAsync(
+            predicate: c => c.Id == contactId && c.Deleted && c.User.Id == _currentUserId,
+        cancellationToken: cancellationToken
+        ).ConfigureAwait(false);
+
+        if (contact == null)
+            throw new BadRequestException("The request is invalid.");
+        
+        if(contact.DeletedTime.HasValue && (DateTime.UtcNow - contact.DeletedTime.Value).Days > 30)
+            throw new BadRequestException("Records deleted more than 30 days old cannot be recovered.");
+        
+        contact.Deleted = false;
+        
+        _contactRepository.Update(contact);
+        await _uow.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        
+        return new BaseResponseModel("Recover contact successful");
     }
 
     #region [PRIVATE FIELDS]

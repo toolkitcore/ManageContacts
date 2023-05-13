@@ -28,6 +28,8 @@ public interface IRepositoryBase<TEntity> where TEntity : class
 
     void Delete(TEntity entity);
 
+    void Delete(IList<TEntity> entities);
+    
     void BulkDelete<TEntity>(IList<TEntity> listEntities) where TEntity : class;
 
     Task BulkDeleteAsync<TEntity>(IList<TEntity> listEntities, CancellationToken cancellationToken = default)

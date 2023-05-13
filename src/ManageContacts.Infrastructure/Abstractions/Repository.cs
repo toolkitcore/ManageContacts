@@ -138,6 +138,9 @@ public class Repository<TEntity> : IRepository<TEntity>
 
     public void Delete(TEntity entity) 
         => _dbSet.Remove(entity);
+    
+    public void Delete(IList<TEntity> entities) 
+        => _dbContext.RemoveRange(entities);
 
     public void BulkDelete<TEntity>(IList<TEntity> listEntities) where TEntity : class
     {
