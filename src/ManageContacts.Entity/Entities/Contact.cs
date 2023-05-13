@@ -37,10 +37,6 @@ public class Contact : AuditEntity
     
     public ICollection<PhoneNumber> PhoneNumbers { get; set; }
     
-    public ICollection<EmailAddress> EmailAddresses { get; set; }
     
-    public ICollection<Address> Addresses { get; set; }
-    
-    public ICollection<Relative> Relatives { get; set; }
     #endregion [REFERENCE PROPERTIES]
 }

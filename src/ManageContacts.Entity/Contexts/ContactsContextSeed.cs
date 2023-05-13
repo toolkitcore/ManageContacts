@@ -29,26 +29,6 @@ public static class ContactsContextSeed
             await context.SaveChangesAsync().ConfigureAwait(false);
         }
         
-        if (!context.AddressTypes.Any())
-        {
-            var addressTypes = GetAddressTypes();
-            await context.AddRangeAsync(addressTypes).ConfigureAwait(false);
-            await context.SaveChangesAsync().ConfigureAwait(false);
-        }
-        
-        if (!context.RelativeTypes.Any())
-        {
-            var relativeTypes = GetRelativeTypes();
-            await context.AddRangeAsync(relativeTypes).ConfigureAwait(false);
-            await context.SaveChangesAsync().ConfigureAwait(false);
-        }
-        
-        if (!context.EmailTypes.Any())
-        {
-            var emailTypes = GetEmailTypes();
-            await context.AddRangeAsync(emailTypes).ConfigureAwait(false);
-            await context.SaveChangesAsync().ConfigureAwait(false);
-        }
         
         logger.Information($"Seeded data for Contact Database associated with context {nameof(ContactsContext)}");
 
@@ -132,16 +112,7 @@ public static class ContactsContextSeed
 
 
     }
-
-    private static IEnumerable<AddressType> GetAddressTypes()
-    {
-        return new List<AddressType>()
-        {
-            new AddressType() { TypeName = "Home", UnaccentedName = "home", Description = "Home." },
-            new AddressType() { TypeName = "Workplace", UnaccentedName = "workplace", Description = "Workplace." },
-            new AddressType() { TypeName = "Other", UnaccentedName = "other", Description = "Other." }
-        };
-    }
+    
     
     private static IEnumerable<PhoneType> GetPhoneTypes()
     {
@@ -152,35 +123,5 @@ public static class ContactsContextSeed
             new PhoneType() { TypeName = "Other", UnaccentedName = "other", Description = "Other." }
         };
     }
-    
-    private static IEnumerable<EmailType> GetEmailTypes()
-    {
-        return new List<EmailType>() 
-        {
-            new EmailType() { TypeName = "Home", UnaccentedName = "home", Description = "Home." },
-            new EmailType() { TypeName = "Workplace", UnaccentedName = "workplace", Description = "Workplace." },
-            new EmailType() { TypeName = "Other", UnaccentedName = "other", Description = "Other." }
-        };
-    }
-    
-    private static IEnumerable<RelativeType> GetRelativeTypes()
-    {
-        return new List<RelativeType>()
-        {
-            new RelativeType() {TypeName = "Spouse", UnaccentedName = "spouse", Description = "Spouse."},
-            new RelativeType() {TypeName = "Child", UnaccentedName = "child", Description = "Child."},
-            new RelativeType() {TypeName = "Mother", UnaccentedName = "mother", Description = "Mother."},
-            new RelativeType() {TypeName = "Father", UnaccentedName = "father", Description = "Father."},
-            new RelativeType() {TypeName = "Parent", UnaccentedName = "parent", Description = "Parent."},
-            new RelativeType() {TypeName = "Brother", UnaccentedName = "brother", Description = "Brother."},
-            new RelativeType() {TypeName = "Sister", UnaccentedName = "sister", Description = "Sister."},
-            new RelativeType() {TypeName = "Friend", UnaccentedName = "friend", Description = "Friend."},
-            new RelativeType() {TypeName = "Relative", UnaccentedName = "relative", Description = "Relative/Family member."},
-            new RelativeType() {TypeName = "Manager", UnaccentedName = "manager", Description = "Manager."},
-            new RelativeType() {TypeName = "Assistant", UnaccentedName = "assistant", Description = "Assistant."},
-            new RelativeType() {TypeName = "Referral", UnaccentedName = "referral", Description = "Referral."},
-            new RelativeType() {TypeName = "Partner", UnaccentedName = "partner", Description = "Partner."},
-            new RelativeType() {TypeName = "Domestic Partner", UnaccentedName = "domestic-partner", Description = "Domestic Partner/Cohabiting Partner."}
-        };
-    }
+
 }

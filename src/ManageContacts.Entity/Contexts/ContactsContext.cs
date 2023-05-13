@@ -32,40 +32,21 @@ public class ContactsContext : ApplicationDbContext
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(GroupConfiguration).Assembly);
         
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(CompanyConfiguration).Assembly);
-        
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AddressTypeConfiguration).Assembly);
-        
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(EmailTypeConfiguration).Assembly);
-        
+
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(PhoneTypeConfiguration).Assembly);
-        
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(RelativeTypeConfiguration).Assembly);
-        
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AddressConfiguration).Assembly);
-        
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AddressConfiguration).Assembly);
-        
+
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(PhoneNumberConfiguration).Assembly);
-        
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(RelativeConfiguration).Assembly);
 
         base.OnModelCreating(modelBuilder);
     }
-
-    public DbSet<AddressType> AddressTypes { get; set; }
+    
     public DbSet<PhoneType> PhoneTypes { get; set; }
-    public DbSet<EmailType> EmailTypes { get; set; }
-    public DbSet<RelativeType> RelativeTypes { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Role> Roles { get; set; }
     public DbSet<UserRole> UserRoles { get; set; }
     public DbSet<Group> Groups { get; set; }
     public DbSet<Contact> Contacts { get; set; }
-    public DbSet<Address> Addresses { get; set; }
-    public DbSet<EmailAddress> EmailAddresses { get; set; }
     public DbSet<PhoneNumber> PhoneNumbers { get; set; }
-    public DbSet<Relative> Relatives { get; set; }
     public DbSet<Company> Companies { get; set; }
-
     
 }

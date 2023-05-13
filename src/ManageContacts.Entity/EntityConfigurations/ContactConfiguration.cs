@@ -27,13 +27,6 @@ public class ContactConfiguration : IEntityTypeConfiguration<Contact>
             .WithOne(c => c.Contact)
             .HasForeignKey<Company>(c => c.Id)
             .OnDelete(DeleteBehavior.Cascade);
-        
-
-        builder.HasMany(c => c.Addresses)
-            .WithOne(ca => ca.Contact)
-            .HasForeignKey(ca => ca.ContactId)
-            .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(c => c.PhoneNumbers)
             .WithOne(cp => cp.Contact)
@@ -41,16 +34,5 @@ public class ContactConfiguration : IEntityTypeConfiguration<Contact>
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasMany(c => c.EmailAddresses)
-            .WithOne(ce => ce.Contact)
-            .HasForeignKey(ce => ce.ContactId)
-            .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasMany(c => c.Relatives)
-            .WithOne(cr => cr.Contact)
-            .HasForeignKey(cr => cr.ContactId)
-            .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
     }
 }

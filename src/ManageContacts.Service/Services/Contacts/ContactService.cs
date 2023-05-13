@@ -22,13 +22,15 @@ public class ContactService : BaseService, IContactService
 {
     private readonly IRepository<Contact> _contactRepository;
     private readonly IRepository<Group> _groupRepository;
-    private readonly IRepository<User> _userRepository;
+    private readonly IRepository<PhoneNumber> _phoneNumberRepository;
+    private readonly IRepository<Company> _companyRepository;
     public ContactService(IUnitOfWork<ContactsContext> uow, IHttpContextAccessor httpContextAccessor, IMapper mapper, ILogger logger, IWebHostEnvironment env)
         : base(uow, httpContextAccessor, mapper, logger, env)
     {
         _contactRepository = uow.GetRepository<Contact>();
         _groupRepository = uow.GetRepository<Group>();
-        _userRepository = uow.GetRepository<User>();
+        _phoneNumberRepository = uow.GetRepository<PhoneNumber>();
+        _companyRepository = uow.GetRepository<Company>();
     }
     
     public async Task<OkResponseModel<PaginationList<ContactModel>>> GetAllAsync(ContactFilterRequestModel filter, CancellationToken cancellationToken = default)
@@ -53,10 +55,7 @@ public class ContactService : BaseService, IContactService
             predicate: c => c.Id == contactId && !c.Deleted,
             include: c => c.Include(i => i.Group)
                 .Include(i => i.Company)
-                .Include(i => i.PhoneNumbers)
-                .Include(i => i.EmailAddresses)
-                .Include(i => i.Addresses)
-                .Include(i => i.Relatives),
+                .Include(i => i.PhoneNumbers),
             cancellationToken: cancellationToken
             ).ConfigureAwait(false);
 
@@ -109,11 +108,8 @@ public class ContactService : BaseService, IContactService
             predicate: c => c.Id == contactId && !c.Deleted,
             include: c => c.Include(i => i.Group)
                 .Include(i => i.Company)
-                .Include(i => i.PhoneNumbers)
-                .Include(i => i.EmailAddresses)
-                .Include(i => i.Addresses)
-                .Include(i => i.Relatives),
-            cancellationToken: cancellationToken
+                .Include(i => i.PhoneNumbers),
+        cancellationToken: cancellationToken
         ).ConfigureAwait(false);
 
         if (contact == null)
@@ -128,65 +124,70 @@ public class ContactService : BaseService, IContactService
         
         if (existContact != null)
             throw new BadRequestException("The contact is already exists.");
-
+        
+        
+        _uow.BeginTransaction();
+        
         contact.FirstName = contactEdit.FirstName;
         contact.LastName = contactEdit.LastName;
         contact.NickName = contactEdit.NickName;
         contact.Birthday = contactEdit.Birthday;
         contact.Note = contactEdit.Note;
-        
-        if(contact.PhoneNumbers.NotNullOrEmpty())
-            foreach (var phone in contact.PhoneNumbers)
+
+        if (contactEdit.Company != null)
+        {
+            if (contact.Company != null)
             {
-                var phoneNumber = contact.PhoneNumbers.FirstOrDefault(p => p.Id == phone.Id);
-                if (phoneNumber != null)
-                {
-                    phoneNumber.Phone = phone.Phone;
-                    phoneNumber.Type = phone.Type;
-                    phoneNumber.FormattedType = phone.FormattedType;
-                    phoneNumber.PhoneTypeId = phone.PhoneTypeId;
-                }
-                else
-                {
-                    var newPhoneNumber = new PhoneNumber
-                    {
-                        Phone = phone.Phone,
-                        Type = phone.Type,
-                        FormattedType = phone.FormattedType,
-                        PhoneTypeId = phone.PhoneTypeId,
-                        ContactId = contact.Id
-                    };
-
-                    contact.PhoneNumbers.Add(newPhoneNumber);
-                }
+                contact.Company.Name = contactEdit.Company.Name;
+                contact.Company.Description = contactEdit.Company.Description;
             }
-        
-        if(contact.EmailAddresses.NotNullOrEmpty())
-            foreach (var emailAddress in contact.EmailAddresses)
+            else
             {
-                var email = contact.EmailAddresses.FirstOrDefault(p => p.Id == emailAddress.Id);
-                if (email != null)
+                contact.Company = new Company()
                 {
-                    email.Email = emailAddress.Email;
-                    email.Type = emailAddress.Type;
-                    email.FormattedType = emailAddress.FormattedType;
-                    email.EmailTypeId = emailAddress.EmailTypeId;
-                }
-                else
-                {
-                    var newEmailAddress = new EmailAddress()
-                    {
-                        Email = emailAddress.Email,
-                        Type = emailAddress.Type,
-                        FormattedType = emailAddress.FormattedType,
-                        EmailTypeId = emailAddress.EmailTypeId,
-                        ContactId = contact.Id
-                    };
-
-                    contact.EmailAddresses.Add(newEmailAddress);
-                }
+                    Name = contactEdit.Company.Name,
+                    Description = contactEdit.Company.Description
+                };
             }
+        }
+        else
+        {
+            if (contact.Company != null)
+            {
+                _companyRepository.Delete(contact.Company);
+            }
+        }
+        
+        foreach (var phone in contactEdit.PhoneNumbers)
+        {
+            var phoneNumber = contact.PhoneNumbers.FirstOrDefault(p => p.Id == phone.Id);
+            if (phoneNumber != null)
+            {
+                phoneNumber.Phone = phone.Phone;
+                phoneNumber.Type = phone.Type;
+                phoneNumber.FormattedType = phone.FormattedType;
+                phoneNumber.PhoneTypeId = phone.PhoneTypeId;
+            }
+            else
+            {
+                var newPhoneNumber = new PhoneNumber
+                {
+                    Phone = phone.Phone,
+                    Type = phone.Type,
+                    FormattedType = phone.FormattedType,
+                    PhoneTypeId = phone.PhoneTypeId,
+                    ContactId = contact.Id
+                };
 
+                contact.PhoneNumbers.Add(newPhoneNumber);
+            }
+        }
+        
+        var phoneNumbersToDelete = contact.PhoneNumbers
+            .Where(p => !contactEdit.PhoneNumbers.Any(pu => pu.Id == p.Id)).ToList();
+        if(phoneNumbersToDelete.NotNullOrEmpty())
+            await _phoneNumberRepository.BulkDeleteAsync(phoneNumbersToDelete, cancellationToken).ConfigureAwait(false);
+        
         return new BaseResponseModel("Update contact successful.");
 
     }
