@@ -21,5 +21,6 @@ public class ContactCleanupJob
         var contacts = _contactRepository.FindAll(
             predicate: c => c.Deleted && (c.DeletedTime.HasValue && c.DeletedTime.Value < DateTime.UtcNow.AddDays(-30)));
         _contactRepository.BulkDelete(contacts.ToList());
+        _uow.SaveChanges();
     }
 }
