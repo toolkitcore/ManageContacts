@@ -37,7 +37,7 @@ public class ContactService : BaseService, IContactService
     {
         var contacts = await _contactRepository.PagingAllAsync(
             predicate: c => (string.IsNullOrEmpty(filter.SearchString) || (!string.IsNullOrEmpty(filter.SearchString) && (c.FirstName.Contains(filter.SearchString) || c.LastName.Contains(filter.SearchString) || c.NickName.Contains(filter.SearchString)))) 
-                            && !c.Deleted
+                            && filter.Deleted
                             && c.User.Id == _currentUserId,
             orderBy: sortFields.GetSortType(filter.GetSortType()),
             pageIndex: filter.PageIndex,
@@ -50,30 +50,11 @@ public class ContactService : BaseService, IContactService
 
         return new OkResponseModel<PaginationList<ContactModel>>(new PaginationList<ContactModel>());
     }
-
-    public async Task<OkResponseModel<PaginationList<ContactModel>>> GetAllDeletedAsync(ContactFilterRequestModel filter, CancellationToken cancellationToken = default)
-    {
-        var contacts = await _contactRepository.PagingAllAsync(
-            predicate: c => (string.IsNullOrEmpty(filter.SearchString) || (!string.IsNullOrEmpty(filter.SearchString) && (c.FirstName.Contains(filter.SearchString) || c.LastName.Contains(filter.SearchString) || c.NickName.Contains(filter.SearchString)))) 
-                            && c.Deleted
-                            && (c.DeletedTime.HasValue && c.DeletedTime.Value > DateTime.UtcNow.AddDays(-30))
-                            && c.User.Id == _currentUserId,
-            orderBy: sortFields.GetSortType(filter.GetSortType()),
-            pageIndex: filter.PageIndex,
-            pageSize: filter.PageSize,
-            cancellationToken: cancellationToken
-        ).ConfigureAwait(false);
-        
-        if (contacts.NotNullOrEmpty())
-            return new OkResponseModel<PaginationList<ContactModel>>(_mapper.Map<PaginationList<ContactModel>>(contacts));
-
-        return new OkResponseModel<PaginationList<ContactModel>>(new PaginationList<ContactModel>());
-    }
-
-    public async Task<OkResponseModel<ContactModel>> GetAsync(Guid contactId, CancellationToken cancellationToken = default)
+    
+    public async Task<OkResponseModel<ContactModel>> GetAsync(Guid contactId, bool deleted = false, CancellationToken cancellationToken = default)
     {
         var contact = await _contactRepository.GetAsync(
-            predicate: c => c.Id == contactId && !c.Deleted && c.User.Id == _currentUserId,
+            predicate: c => c.Id == contactId && c.Deleted == deleted && c.User.Id == _currentUserId,
             include: c => c.Include(i => i.Group)
                 .Include(i => i.Company)
                 .Include(i => i.PhoneNumbers),
@@ -91,7 +72,6 @@ public class ContactService : BaseService, IContactService
         var group = await _groupRepository.GetAsync(
             predicate: g => g.Id == groupId && !g.Deleted && g.User.Id == _currentUserId,
             include: g => g.Include(i => i.Contacts),
-            orderBy: u => u.OrderByDescending(x => x.CreatedTime),
             cancellationToken: cancellationToken
         ).ConfigureAwait(false);
 
@@ -117,6 +97,32 @@ public class ContactService : BaseService, IContactService
         if (existContact != null)
             throw new BadRequestException("The contact is already exists.");
 
+        if (contactEdit.GroupId != null)
+        {
+            var group = await _groupRepository.GetAsync(
+                predicate: g => g.Id == contactEdit.GroupId && !g.Deleted,
+                cancellationToken: cancellationToken
+            ).ConfigureAwait(false);
+            if(group == null)
+                throw new BadRequestException("The group contact doesn't exist");
+        }
+
+        var phoneTypeModels = contactEdit.PhoneNumbers
+            .Where(p => p.PhoneTypeId != null)
+            .Select(p => new
+            {
+                Id = p.PhoneTypeId,
+                Type = p.Type
+            });
+
+        var phoneTypes = await _phoneNumberRepository.FindAllAsync(
+            predicate: p=> phoneTypeModels.Any(x => x.Id == p.PhoneTypeId && x.Type == p.Type),
+            cancellationToken: cancellationToken
+            ).ConfigureAwait(false);
+
+        if (phoneTypeModels.Count() != phoneTypes.Count())
+            throw new BadRequestException("There are phone types that don't exist.");
+        
         var newContact = _mapper.Map<Contact>(contactEdit);
         newContact.CreatorId = _currentUserId;
         await _contactRepository.InsertAsync(newContact, cancellationToken).ConfigureAwait(false);
@@ -200,7 +206,7 @@ public class ContactService : BaseService, IContactService
                 phoneNumber.Phone = phone.Phone;
                 phoneNumber.Type = phone.Type;
                 phoneNumber.FormattedType = phone.FormattedType;
-                phoneNumber.PhoneTypeId = phone.PhoneTypeId;
+                phoneNumber.PhoneTypeId = phone.PhoneTypeId.HasValue ? phone.PhoneTypeId.Value : null;
             }
             else
             {
@@ -209,7 +215,7 @@ public class ContactService : BaseService, IContactService
                     Phone = phone.Phone,
                     Type = phone.Type,
                     FormattedType = phone.FormattedType,
-                    PhoneTypeId = phone.PhoneTypeId,
+                    PhoneTypeId = phone.PhoneTypeId.HasValue ? phone.PhoneTypeId.Value : null,
                     ContactId = contact.Id
                 };
 

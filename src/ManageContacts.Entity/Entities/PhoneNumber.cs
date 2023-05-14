@@ -20,7 +20,7 @@ public class PhoneNumber
     [StringLength(255)]
     public string? FormattedType { get; set; }
 
-    public Guid PhoneTypeId { get; set; }
+    public Guid? PhoneTypeId { get; set; }
     
     public Guid ContactId { get; set; }
     

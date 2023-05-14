@@ -12,18 +12,18 @@ namespace ManageContacts.Service.Services.PhoneTypes;
 
 public class PhoneTypeService : IPhoneTypeService
 {
-    private readonly IRepository<PhoneType> _addressTypeRepository;
+    private readonly IRepository<PhoneType> _phoneTypeRepository;
     private readonly IMapper _mapper;
     
     public PhoneTypeService(IUnitOfWork<ContactsContext> uow, IMapper mapper)
     {
         _mapper = _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-        _addressTypeRepository = uow.GetRepository<PhoneType>();
+        _phoneTypeRepository = uow.GetRepository<PhoneType>();
     }
     
     public async Task<OkResponseModel<IEnumerable<PhoneTypeModel>>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var phoneTypes = await _addressTypeRepository.FindAllAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
+        var phoneTypes = await _phoneTypeRepository.FindAllAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
         
         if(phoneTypes.NotNullOrEmpty())
             return new OkResponseModel<IEnumerable<PhoneTypeModel>>(_mapper.Map<IEnumerable<PhoneTypeModel>>(phoneTypes));

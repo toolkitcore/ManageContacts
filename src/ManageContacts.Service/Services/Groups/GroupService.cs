@@ -12,6 +12,7 @@ using ManageContacts.Shared.Exceptions;
 using ManageContacts.Shared.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace ManageContacts.Service.Services.Groups;
@@ -103,6 +104,7 @@ public class GroupService : BaseService, IGroupService
     {
         var group = await _groupRepository.GetAsync(
             predicate: g =>g.Id == groupId && !g.Deleted && g.User.Id == _currentUserId,
+            include: g => g.Include(i => i.Contacts),
             cancellationToken: cancellationToken
         ).ConfigureAwait(false);
 
@@ -110,27 +112,32 @@ public class GroupService : BaseService, IGroupService
             throw new BadRequestException("The request is invalid.");
         
         _uow.BeginTransaction();
-        
-        var contacts = await _contactRepository.FindAllAsync(
-            predicate: c => c.GroupId == groupId && !c.Deleted,
-            cancellationToken: cancellationToken
-        ).ConfigureAwait(false);
 
-        if (contacts.NotNullOrEmpty())
+        if (group.Contacts.NotNullOrEmpty())
         {
-            foreach (var contact in contacts)
+            foreach (var contact in group.Contacts)
             {
                 contact.GroupId = null;
             }
             
             if (deleteGroupContacts)
-                await _contactRepository.BulkDeleteAsync(contacts.ToList(), cancellationToken).ConfigureAwait(false);
+                await _contactRepository.BulkDeleteAsync(group.Contacts.ToList(), cancellationToken).ConfigureAwait(false);
             else
-                await _contactRepository.BulkUpdateAsync(contacts.ToList(), cancellationToken).ConfigureAwait(false);
+                await _contactRepository.BulkUpdateAsync(group.Contacts.ToList(), cancellationToken).ConfigureAwait(false);
         }
         
         _groupRepository.Delete(group);
-        await _uow.CommitAsync(cancellationToken).ConfigureAwait(false);
+        
+        try
+        {
+            await _uow.CommitAsync(cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            await _uow.RollbackAsync(cancellationToken).ConfigureAwait(false);
+            _logger.LogError(ex, ex.Message);
+            throw new InternalServerException("Update group contact failure.");
+        }
         
         return new BaseResponseModel("Delete group contact successful.");
     }

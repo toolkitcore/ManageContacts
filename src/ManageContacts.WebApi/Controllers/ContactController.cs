@@ -18,19 +18,12 @@ public class ContactController : BaseController
     [Authorized]
     public async Task<IActionResult> GetAllAsync([FromQuery]ContactFilterRequestModel filter, CancellationToken cancellationToken = default)
         => Ok(await _contactService.GetAllAsync(filter, cancellationToken).ConfigureAwait(false));
-    
-    [HttpGet]
-    [Route("api/contacts/bin")]
-    [Authorized]
-    public async Task<IActionResult> GetAllBinAsync([FromQuery]ContactFilterRequestModel filter, CancellationToken cancellationToken = default)
-        => Ok(await _contactService.GetAllDeletedAsync(filter, cancellationToken).ConfigureAwait(false));
 
-    
     [HttpGet]
     [Route("api/contacts/{id:guid}")]
     [Authorized]
-    public async Task<IActionResult> GetAsync([FromRoute(Name = "id")]Guid contactId, CancellationToken cancellationToken = default)
-        => Ok(await _contactService.GetAsync(contactId, cancellationToken).ConfigureAwait(false));
+    public async Task<IActionResult> GetAsync([FromRoute(Name = "id")]Guid contactId, [FromQuery(Name = "deleted")]bool deleted = false, CancellationToken cancellationToken = default)
+        => Ok(await _contactService.GetAsync(contactId, deleted, cancellationToken).ConfigureAwait(false));
     
     [HttpGet]
     [Route("api/contacts/groups/{id:guid}")]

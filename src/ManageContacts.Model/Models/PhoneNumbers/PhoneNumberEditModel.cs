@@ -6,5 +6,5 @@ public class PhoneNumberEditModel
     public string Phone { get; set; }
     public string? Type { get; set; }
     public string? FormattedType { get; set; }
-    public Guid PhoneTypeId { get; set; }
+    public Guid? PhoneTypeId { get; set; }
 }
