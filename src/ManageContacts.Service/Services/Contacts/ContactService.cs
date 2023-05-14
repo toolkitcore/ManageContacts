@@ -275,6 +275,7 @@ public class ContactService : BaseService, IContactService
             throw new BadRequestException("Records deleted more than 30 days old cannot be recovered.");
         
         contact.Deleted = false;
+        contact.DeletedTime = null;
         
         _contactRepository.Update(contact);
         await _uow.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
