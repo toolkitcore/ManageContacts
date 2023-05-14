@@ -23,7 +23,6 @@ public class AuthorizedAttribute : Attribute, IAsyncAuthorizationFilter
     
     public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
     {
-
         var httpContextAccessor = context.HttpContext.RequestServices.GetService(typeof(IHttpContextAccessor)) as HttpContextAccessor
                                   ?? throw new ArgumentNullException(nameof(HttpContextAccessor));
 

@@ -29,23 +29,11 @@ public class UnitOfWork<TContext> : IUnitOfWork<TContext> where TContext : DbCon
     public void Commit()
     {
         _dbContext.SaveChanges();
-
         if (_transaction != null)
         {
-            try
-            {
-                _transaction.Commit();
-            }
-            catch (Exception exception)
-            {
-                _transaction.Rollback();
-                throw exception;
-            }
-            finally
-            {
-                _transaction.Dispose();
-                _transaction = null;
-            }
+            _transaction.Commit();
+            _transaction.Dispose();
+            _transaction = null;
         }
     }
 
@@ -55,20 +43,9 @@ public class UnitOfWork<TContext> : IUnitOfWork<TContext> where TContext : DbCon
         
         if (_transaction != null)
         {
-            try
-            {
-                await _transaction.CommitAsync(cancellationToken);
-            }
-            catch (Exception exception)
-            {
-                await _transaction.RollbackAsync(cancellationToken);
-                throw exception;
-            }
-            finally
-            {
-                await _transaction.DisposeAsync();
-                _transaction = null;
-            }
+            await _transaction.CommitAsync(cancellationToken);
+            await _transaction.DisposeAsync();
+            _transaction = null;
         }
     }
     
@@ -91,8 +68,17 @@ public class UnitOfWork<TContext> : IUnitOfWork<TContext> where TContext : DbCon
             return;
 
         _transaction.Rollback();
-
         _transaction.Dispose();
+        _transaction = null;
+    }
+
+    public async Task RollbackAsync(CancellationToken cancellationToken = default)
+    {
+        if(_transaction == null)
+            return;
+        
+        await _transaction.RollbackAsync(cancellationToken);
+        await _transaction.DisposeAsync();
         _transaction = null;
     }
 

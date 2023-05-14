@@ -230,6 +230,7 @@ public class ContactService : BaseService, IContactService
         }
         catch (Exception ex)
         {
+            await _uow.RollbackAsync(cancellationToken).ConfigureAwait(false);
             _logger.LogError(ex, ex.Message);
             throw new InternalServerException("Update contact failure.");
         }
